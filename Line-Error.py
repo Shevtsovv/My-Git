@@ -9,15 +9,14 @@ with open("approcs.txt", "r") as app:
         y.append(float(s[1]))
 t = np.array(x)
 v = np.array(y)
-
-# Perform linear fit
+# Коэффициенты
 coefficients = np.polyfit(t, v, 1)
 #print("Linear Fit Coefficients:", coefficients)
-
-# Create polynomial function
+# Cоздаем аппроксимирующую прямую
 p = np.poly1d(coefficients)
-plt.plot(t, v, linestyle = " ", color = "orange", marker = ".")
-#plt.scatter(t, v, label="Data Points")
+plt.plot(t, p(t), linestyle = "-", color = "black")
+plt.scatter(t, v, color = "blue")
+plt.title("Заголовок для графика")
 plt.minorticks_on()
 plt.grid(visible = True, which = "major", linewidth = 1.2, linestyle = "-", color = "lightgray")
 plt.xlabel("Измерение по оси абцисс")
