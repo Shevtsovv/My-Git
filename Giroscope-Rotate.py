@@ -33,7 +33,7 @@ plt.plot(moment_power, p(moment_power), linestyle = "-", color = "black")
 plt.legend(["Аппроксимирующая прямая"])
 plt.savefig("Прецессия и момент силы")
 
-plt.show()
+#plt.show()
 
 
 
