@@ -28,14 +28,17 @@ def calculate_hyper(x0,y0,v0,GM=398600.4415,NUM=100):
 
 def trajectory(x,y,x0,y0):
     if x is not None and y is not None:
-        plt.plot(x,y,label="Эллиптическая орбита спутника")
-        plt.plot(x0,y0,label="Начальное положение спутника")
-        plt.plot(0,0,label="Центр земли", marker="*", color="green")
+        plt.plot(x,y)
+        plt.plot(x0,y0)
+        plt.plot(0,0, marker="*", color="green")
+        plt.title("Гиперболическая траектория спутника")
     plt.xlabel("x, (км)")
     plt.ylabel("y, (км)")
     plt.grid(visible=True, which="major", linewidth=1.2, color="lightgray", linestyle="--")
     plt.grid(visible=True, which="minor", linewidth=1.2, color="lightgray", linestyle="-")
+    plt.savefig("satellite.png")
     plt.show()
+
 #It's working
 x0=7000
 y0=0
