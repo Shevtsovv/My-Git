@@ -1,0 +1,108 @@
+#include <iostream>
+#include <cmath>
+#include <string>
+#include <sstream>
+using std::cout;
+using std::endl;
+
+//Parametrs (1)
+double pi = 3.1415926;
+double period = pi/2;
+
+//Factorial (2) 
+int factorial(int n){
+    int result = 1;
+    for(int i = 1; i <= n; ++i){
+        result *= i;
+    }
+    return result;
+}
+
+//Derivatives, in sin and cos x transform in degrees!(3)
+double dexp(double x, int df_order){
+    return exp(x);
+}
+double dsin(double x, int df_order){
+    double result = sin((x*180)/(pi) + period*df_order);
+    return result;
+}
+double dcos(double x, int df_order){
+    double result = cos((x*180)/(pi) + period*df_order);
+    return result;
+}
+double dln(double x, int df_order){
+    if(x > 0 && df_order - 1 > 0){
+        double result = (pow(-1, df_order - 1)*factorial(df_order - 1))/(pow(x, df_order));
+        return result;
+    } 
+    else{
+        return x;
+    }
+}
+//Taylor Polynom all functions
+std::string exptaylor(int n){
+    std::ostringstream exp;
+    exp << "f(x) = ";
+    
+    for(int l = 0; l <= n; ++l){
+        double C = dexp(0, l)/factorial(l);
+        if(C == 0) continue;
+
+        if(l > 0 && C > 0) exp << " + ";
+        exp << C <<"*"<<"(x - "<< 0 <<" )";
+        exp << "^" << l;
+    }
+    return exp.str();
+}
+std::string sintaylor(int n){
+    std::ostringstream sin;
+    sin << "f(x) = ";
+
+    for(int l = 1; l <= n; l+=2){
+        double C = dsin(0, l)/factorial(l);
+        if(C == 0) continue;
+
+        if(l > 0 && C > 0) sin << " + ";
+        //else if(C < 0) sin << " - ";
+        sin << C <<"*"<<"(x - "<< 0 << " )";
+        sin << "^" << l;
+    }
+    return sin.str();
+}
+std::string costaylor(int n){
+    std::ostringstream cos;
+    cos << "f(x) = ";
+
+    for(int l = 0; l <= n; l+=2){
+        double C = dcos(0, l)/factorial(l);
+        if(C == 0) continue;
+
+        if(C > 0 && l > 0) cos << " + ";
+        //else if(C < 0) cos << " - ";
+        cos << C <<"*"<< "(x - " << 0 << " )";
+        cos << "^" << l;
+    }
+    return cos.str();
+}
+std::string lntaylor(int n){
+    std::ostringstream ln;
+    ln << "f(x) = ";
+
+    for(int l = 1; l <= n; ++l){
+        double C = dln(1, l)/factorial(l);
+        if(C == 0) continue;
+
+        if(l > 0 && C > 0) ln << " + ";
+        //else if(C < 0) ln << " - ";
+        ln << C <<"*"<<"(x - "<< 0 << " )";
+        ln << "^" << l;
+    }
+    return ln.str();
+}
+int main(){
+    std::string h = lntaylor(4);
+    cout << h << endl;
+}
+
+
+
