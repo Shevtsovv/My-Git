@@ -18,6 +18,39 @@ int factorial(int n){
     return result;
 }
 
+//Euclid algoritm
+int nod(int a, int b){
+    while(b != 0){
+        int step = b;
+        b = a % b;
+        a = step;
+    }
+    return a;
+}
+//transform decimals in frac
+std::string frac(double decimal, int accuracy = 1.0e-4){
+    int num = 1;
+    int denum = 1;
+
+    double frac = decimal;
+    while(std::abs(frac - std::round(frac)) > accuracy){
+        denum++;
+        frac = denum*decimal;
+    }
+    num = std::round(frac);
+
+    //simplify
+    int common = nod(num, denum);
+    num /= common;
+    denum /= common; 
+
+    //string form
+    if(denum == 1){
+        return std::to_string(num);
+    } else{
+        return std::to_string(num) + "/" + std::to_string(denum);
+    }
+}
 //Derivatives, in sin and cos x transform in degrees!(3)
 double dexp(double x, int df_order){
     return exp(x);
@@ -89,18 +122,19 @@ std::string lntaylor(int n){
     ln << "f(x) = ";
 
     for(int l = 1; l <= n; ++l){
-        double C = dln(1, l)/factorial(l);
-        if(C == 0) continue;
+        double s = dln(1, l)/factorial(l);
+        std::string C = frac(s);
+        if(s == 0) continue;
 
-        if(l > 0 && C > 0) ln << " + ";
-        //else if(C < 0) ln << " - ";
-        ln << C <<"*"<<"(x - "<< 0 << " )";
+        if(l > 0 && s > 0) ln << " + ";
+        else if(s < 0) ln << " + ";
+        ln <<" "<<"["<< C <<"]" <<"x";
         ln << "^" << l;
     }
     return ln.str();
 }
 int main(){
-    std::string h = lntaylor(4);
+    std::string h = lntaylor(3);
     cout << h << endl;
 }
 
