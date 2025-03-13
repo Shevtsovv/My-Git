@@ -28,7 +28,7 @@ int nod(int a, int b){
     return a;
 }
 //transform decimals in frac
-std::string frac(double decimal, int accuracy = 1.0e-4){
+std::string frac(double decimal, int accuracy = 1.0e-6){
     int num = 1;
     int denum = 1;
 
@@ -75,14 +75,15 @@ double dln(double x, int df_order){
 //Taylor Polynom all functions
 std::string exptaylor(int n){
     std::ostringstream exp;
-    exp << "f(x) = ";
+    exp << "exp(x) = ";
     
     for(int l = 0; l <= n; ++l){
-        double C = dexp(0, l)/factorial(l);
-        if(C == 0) continue;
+        double s = dexp(0, l)/factorial(l);
+        std::string C = frac(s);
+        if(s == 0) continue;
 
-        if(l > 0 && C > 0) exp << " + ";
-        exp << C <<"*"<<"(x - "<< 0 <<" )";
+        if(l > 0 && s > 0) exp << " + ";
+        exp << "[" << C << "]" <<"x";
         exp << "^" << l;
     }
     return exp.str();
@@ -92,12 +93,13 @@ std::string sintaylor(int n){
     sin << "f(x) = ";
 
     for(int l = 1; l <= n; l+=2){
-        double C = dsin(0, l)/factorial(l);
-        if(C == 0) continue;
+        double s = dsin(0, l)/factorial(l);
+        std::string C = frac(s);
+        if(s == 0) continue;
 
-        if(l > 0 && C > 0) sin << " + ";
+        if(l > 0 && s > 0) sin << " + ";
         //else if(C < 0) sin << " - ";
-        sin << C <<"*"<<"(x - "<< 0 << " )";
+        sin << "[" << C << "]"<<"x";
         sin << "^" << l;
     }
     return sin.str();
@@ -107,26 +109,27 @@ std::string costaylor(int n){
     cos << "f(x) = ";
 
     for(int l = 0; l <= n; l+=2){
-        double C = dcos(0, l)/factorial(l);
-        if(C == 0) continue;
+        double s = dcos(0, l)/factorial(l);
+        std::string C = frac(s);
+        //if(s == 0) continue;
 
-        if(C > 0 && l > 0) cos << " + ";
-        //else if(C < 0) cos << " - ";
-        cos << C <<"*"<< "(x - " << 0 << " )";
+        if(l > 0 && s > 0) cos << " + ";
+        else if(s < 0) cos << " + ";
+        cos << " " <<"["<< C << "]"<< "x";
         cos << "^" << l;
     }
     return cos.str();
 }
 std::string lntaylor(int n){
     std::ostringstream ln;
-    ln << "f(x) = ";
+    ln << "ln(1+x) = ";
 
     for(int l = 1; l <= n; ++l){
         double s = dln(1, l)/factorial(l);
         std::string C = frac(s);
         if(s == 0) continue;
 
-        if(l > 0 && s > 0) ln << " + ";
+        if(l > 1 && s > 0) ln << " + ";
         else if(s < 0) ln << " + ";
         ln <<" "<<"["<< C <<"]" <<"x";
         ln << "^" << l;
@@ -134,7 +137,7 @@ std::string lntaylor(int n){
     return ln.str();
 }
 int main(){
-    std::string h = lntaylor(3);
+    std::string h = lntaylor(8);
     cout << h << endl;
 }
 
