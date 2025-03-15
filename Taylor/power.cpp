@@ -5,10 +5,10 @@
 
 class x_power{
     private: 
-    int power; 
+    double power; 
     
     public:
-    x_power(int n = 0) : power(n) {}
+    x_power(double n = 0) : power(n) {}
   
     x_power operator*(const x_power& second) const {
         return x_power(power + second.power);
@@ -22,7 +22,7 @@ class x_power{
     static x_power parse(const std::string& degree){
         std::stringstream ss(degree);
         char x, construction;
-        int order;
+        double order;
         ss >> x >> construction >> order;
         if(x != 'x' || construction != '^'){
             throw std::invalid_argument("Incorrect form");

@@ -5,10 +5,10 @@
 
 class xdivide{
     private:
-    int power;
+    double power;
 
     public:
-    xdivide(int n = 0): power(n) {}
+    xdivide(double n = 0): power(n) {}
 
     xdivide operator/(const xdivide& second) const {
         return xdivide(power - second.power);
@@ -21,7 +21,7 @@ class xdivide{
     static xdivide parse(std::string& degree){
         std::stringstream ss(degree);
         char x, construction;
-        int order;
+        double order;
         ss >> x >> construction >> order;
         if(x != 'x' || construction != '^'){
             throw std::invalid_argument("Incorrect form");
