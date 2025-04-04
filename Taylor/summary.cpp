@@ -85,8 +85,6 @@ int main() {
     } catch (const std::invalid_argument& e) {
         std::cerr << e.what() << std::endl;
     }
-
-    return 0;
 }
 
 //ask: x^7 + x^7 + x^8
