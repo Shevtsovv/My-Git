@@ -1,4 +1,3 @@
-#pragma once
 #include <iostream>
 //Класс операций с матрицами
 class submatrix{
@@ -11,7 +10,7 @@ class submatrix{
     int cols;
 
     public:
-    //Выделение памяти под двумерный массив, создание матрицы заданного размера
+    //Создание матрицы заданного размера, если введены некорректные размеры, функция выдает ошибку
     submatrix(int m, int n): str(m), cols(n){
         if((m <= 0) && (n <= 0)){
             throw std::invalid_argument("The matrix's parameters is only positive numbers!");
@@ -21,7 +20,7 @@ class submatrix{
             matrix[i] = new double[n];
         }
     }
-    //Освобождение неиспользуемой памяти, удаление матрицы заданного размера
+    //Освобождение неиспользуемой памяти, удаление матрицы заданного размера, вызывается автоматически после завершения программы
     ~submatrix(){
         for(int it = 0; it < str; ++it){
             delete[] matrix[it];
@@ -41,7 +40,7 @@ class submatrix{
         return *this;
     }
     //Вывод матрицы заданного размера на экран
-    void submatrix_print(){
+    void subprint(){
         for(int i = 0; i < str; ++i){
             for(int j = 0; j < cols; ++j){
                 std::cout << matrix[i][j] << " ";
@@ -49,14 +48,18 @@ class submatrix{
             std::cout << std::endl;
         } 
     }
-    //Доступ к произвольному элементу матрицы: если вводится некорректный номер строки или столбца, функция выдаёт ошибку
-    double& submatrix_element(int i, int j){
+    //Доступ и чтение к произвольному элементу матрицы
+    double& subqv(int i, int j){
+        return matrix[i][j];
+    }
+    //Доступ и чтение любого элемента из заданной матрицы 
+    double& operator()(int i, int j) const {
         return matrix[i][j];
     }
     //Произведение матриц, если их необходимые измерения не совпадают, то функция выдаёт ошибку
     submatrix operator*(const submatrix& other) const {
         if (cols != other.str) {
-            throw std::invalid_argument("The matrixes's sizes have incorrect form");
+            throw std::invalid_argument("The matrixes's sizes have incorrect form!");
         }
         submatrix result(str, other.cols);
         for (int i = 0; i < str; ++i) {
@@ -71,7 +74,7 @@ class submatrix{
         return result;
     }
     //Транспонирование матрицы заданного размера
-    submatrix submatrix_transpose() const{
+    submatrix subtranspose() const{
         submatrix transpose(cols, str);
         for(int i = 0; i < str; ++i){
             for(int j = 0; j < cols; ++j){
@@ -79,6 +82,46 @@ class submatrix{
             }
         }
         return transpose;
+    }
+    
+    //Создание дополнительного минора без заданной строки и столбца 
+    submatrix subminor(int row, int col) const {
+        if(str != cols) {
+            throw std::invalid_argument("Matrix isn't square!");
+        }
+        submatrix minor(str - 1, cols - 1);
+        int minor_i = 0;
+        for (int i = 0; i < str; ++i) {
+            if (i == row) continue;
+            int minor_j = 0;
+            for (int j = 0; j < cols; ++j) {
+                if (j == col) continue;
+                minor(minor_i, minor_j) = matrix[i][j];
+                minor_j++;
+            }
+            minor_i++;
+        }
+        return minor;
+    }
+
+    //Вычисление определителя квадратной матрицы
+    int subdeterminant() const {
+        if (str != cols) {
+            throw std::invalid_argument("Matrix isn't square!");
+        }
+        if (str == 1) {
+            return matrix[0][0];
+        }
+        if (str == 2) {
+            return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+        }
+        int det = 0;
+        for (int j = 0; j < cols; ++j) {
+            submatrix minor = subminor(0, j);
+            int sign = (j % 2 == 0) ? 1 : -1;
+            det += sign * matrix[0][j] * minor.subdeterminant();
+        }
+        return det;
     }
 };
 
