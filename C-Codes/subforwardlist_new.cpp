@@ -1,29 +1,30 @@
+#pragma once
 #include <iostream>
 template <typename T>  
 class subforwardlist{
 private:
-    struct Node{ 
+    struct subforward_node{ 
         T data;
-        Node* next;
-        Node* prev;
-        Node(const T& val) : data(val), next(nullptr), prev(nullptr) {}
+        subforward_node* next;
+        subforward_node* prev;
+        subforward_node(const T& val) : data(val), next(nullptr), prev(nullptr) {}
     };
-    Node* head;
-    Node* tail;
+    subforward_node* head;
+    subforward_node* tail;
     size_t size;
 
 public:
     subforwardlist() : head(nullptr), tail(nullptr), size(0) {}
     ~subforwardlist() {
         while (head) {
-            Node* temp = head;
+            subforward_node* temp = head;
             head = head->next;
             delete temp;
         }
     }
     //Конструктор копирования для двусвязного списка
     subforwardlist(const subforwardlist& other) : head(nullptr), tail(nullptr), size(0) {
-        Node* current = other.head;
+        subforward_node* current = other.head;
         while (current) {
             subforward_push_back(current->data);
             current = current->next;
@@ -43,7 +44,7 @@ public:
 
     //Добавление элемента в конец двусвязного списка
     void subforward_push_back(const T& value){
-        Node* newNode = new Node(value);
+        subforward_node* newNode = new subforward_node(value);
         if (!tail) {
             head = tail = newNode;
         } else {
@@ -56,7 +57,7 @@ public:
     //Удаление элемента с конца двусвязного списка
     bool subforward_pop_back() {
         if (!tail) return false;
-        Node* temp = tail;
+        subforward_node* temp = tail;
         tail = tail->prev;
         if (tail) {
             tail->next = nullptr;
@@ -69,7 +70,7 @@ public:
     }
     //Добавление элемента в начало двусвязного списка
     void subforward_push_front(const T& value) {
-        Node* newNode = new Node(value);
+        subforward_node* newNode = new subforward_node(value);
         if (!head) {
             head = tail = newNode;
         } else {
@@ -82,7 +83,7 @@ public:
     //Удаление элемента из начала двусвчзного списка
     bool subforward_pop_front() {
         if (!head) return false;
-        Node* temp = head;
+        subforward_node* temp = head;
         head = head->next;
         if (head) {
             head->prev = nullptr;
@@ -94,9 +95,9 @@ public:
         return true;
     }
     //Получение элемента двусвязного списка по его индексу
-    Node* subforward_get(size_t index) const {
+    subforward_node* subforward_get(size_t index) const {
         if (index >= size) return nullptr;
-        Node* current = head;
+        subforward_node* current = head;
         for (size_t i = 0; i < index; ++i) {
             current = current->next;
         }
@@ -113,9 +114,9 @@ public:
             subforward_push_back(value);
             return true;
         }
-        Node* right = subforward_get(index);
-        Node* left = right->prev;
-        Node* newNode = new Node(value);
+        subforward_node* right = subforward_get(index);
+        subforward_node* left = right->prev;
+        subforward_node* newNode = new subforward_node(value);
         newNode->prev = left;
         newNode->next = right;
         left->next = newNode;
@@ -132,9 +133,9 @@ public:
         if (index == size - 1) {
             return subforward_pop_back();
         }
-        Node* node = subforward_get(index);
-        Node* left = node->prev;
-        Node* right = node->next;
+        subforward_node* node = subforward_get(index);
+        subforward_node* left = node->prev;
+        subforward_node* right = node->next;
         left->next = right;
         right->prev = left;
         delete node;
