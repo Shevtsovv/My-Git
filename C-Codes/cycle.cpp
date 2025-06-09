@@ -107,8 +107,8 @@ public:
     }
 };
 int main() {
-    const double T_hot = 343;
-    const double T_cold = 275;
+    const double T_hot = 380;
+    const double T_cold = 286;
 
     state s1(1e5, 5, T_hot, 1);
     isoprocess p1(s1);
@@ -127,7 +127,5 @@ int main() {
     std::ofstream data("cua.txt");
     double theta = 1 - (std::abs(s4.Q_) / (s2.Q_));
     double A = theta * s2.Q_;
-    data << theta << " " << A << std::endl;
-
-
+    data << theta << " " << A << " " << s2.Q_ << " " << std::abs(s4.Q_) << std::endl;
 }
