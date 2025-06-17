@@ -1,289 +1,102 @@
 #include <iostream>
-#include <vector>
+#include <fstream>
 #include <cmath>
 
-template <typename Type>
-class polynomial{
-    std::vector<Type> c_;
+const double R = 8.31;
+struct state {
+    double p_, v_, t_, n_;
+    double A_, Q_, S_;
+    state(double p, double v, double t, double n = 1, double A = 0, double Q = 0, double S = 0) :
+    p_(p), v_(v), t_(t), n_(n), A_(A), Q_(Q), S_(S) {
+        if (std::abs(p * v - n * R * t) > 1e-2) {
+            p = (n * R * t) / v;
+        }
+    }
+};
+class isoprocess {
+    state iso_;
 public:
-    polynomial<Type>(const std::vector<Type>& c) : c_{c} {}
+    isoprocess(const state& iso) : iso_(iso) {}
+    state isotermial(double vlm, std::ofstream& data) const {
+        double step = std::abs((vlm - iso_.v_) / 100);
+        double dv = (vlm > iso_.v_) ? step : -step;
 
-    const std::vector<Type>& data() const {
-        return c_;
-    }
-
-    Type operator[](std::size_t n) const {
-        return c_[n];
-    }
-
-    Type& operator[](std::size_t n) {
-        return c_[n];
-    }
-    
-    Type operator()(Type m) const {
-        Type res = 0;
-        Type xx = 1;
-        for (std::size_t i = 0; i < c_.size(); ++i){
-            res += c_[i] * xx;
-            xx *= m;
-        }
-        return res;
-    }
-
-    polynomial operator+(const polynomial& o) const {
-        std::vector<Type> res = c_.size() < o.c_.size() ? o.c_ : c_;
-        if (c_.size() < o.c_.size()){
-            for (std::size_t i = 0; i < c_.size(); ++i){
-                res[i] += c_[i];
+        double cur_v = iso_.v_;
+        double p = 0;
+        double S = 0;
+        if (vlm > iso_.v_) {
+            for (; cur_v <= vlm; cur_v += dv) {
+                p = (iso_.p_ * iso_.v_) / (cur_v);
+                S = iso_.S_ + iso_.n_ * R * std::log(cur_v / iso_.v_);
+                data << cur_v << " " << p << " "<< iso_.t_<< " " << S << std::endl;
             }
         } else {
-            for (std::size_t i = 0; i < o.c_.size(); ++i){
-                res[i] += o.c_[i];
+            for(; cur_v >= vlm; cur_v += dv) {
+                p = (iso_.p_ * iso_.v_) / (cur_v);
+                S = iso_.S_ + iso_.n_ * R * std::log(cur_v / iso_.v_);
+                data << cur_v << " " << p << " "<< iso_.t_<< " " << S << std::endl;
             }
         }
-        return {res};
+        double A = iso_.n_ * R * iso_.t_ * std::log((vlm) / (iso_.v_));
+        double Q = A;
+        return state(p, vlm, iso_.t_, iso_.n_, A, Q, S);
     }
+    state adiabatic(double vlm, double i, std::ofstream& data) const {
+        double step = std::abs((vlm - iso_.v_) / 100);
+        double dv = (vlm > iso_.v_) ? step : -step;
+        const double c_v = (i / 2) * R;
 
-    polynomial operator-(const polynomial& d) const {
-        std::size_t ns = (c_.size() < d.c_.size()) ? d.c_.size() : c_.size();
-        std::vector<Type> res(ns, 0);
+        double cur_v = iso_.v_;
+        double p, t = 0;
 
-        if (c_.size() < d.c_.size()){
-            for (std::size_t i = 0; i < c_.size(); ++i){
-                res[i] = c_[i] - d.c_[i];
-                for (std::size_t l = 0; l < ns - c_.size(); ++l){
-                    res[c_.size() + l] = 0 - d.c_[c_.size() + l];
-                }
+        const double xx = (2 + i) / (i);
+        if(vlm > iso_.v_) {
+            for(; cur_v <= vlm; cur_v += dv) {
+                double vv = ((iso_.v_) / (cur_v));
+                p = iso_.p_ * std::pow(vv, xx);
+                t = iso_.t_ * std::pow(vv, xx - 1);
+                data << cur_v << " " << p << " "<< t << " " << iso_.S_ << std::endl;
             }
         } else {
-            for (std::size_t i = 0; i < d.c_.size(); ++i){
-                res[i] = c_[i] - d.c_[i];
-                for (std::size_t l = 0; l < ns - d.c_.size(); ++l){
-                    res[d.c_.size() + l] = c_[d.c_.size() + l] - 0;
-                }
+            for(; cur_v >= vlm; cur_v += dv) {
+                double vv = ((iso_.v_) / (cur_v));
+                p = iso_.p_ * std::pow(vv, xx);
+                t = iso_.t_ * std::pow(vv, xx - 1);
+                data << cur_v << " " << p << " "<< t << " " << iso_.S_ << std::endl;
             }
         }
-        return {res};
-    }
-
-    polynomial operator*(const polynomial& o) const {
-        std::size_t ns = c_.size() + o.c_.size() - 1;
-        std::vector<Type> res(ns, 0);
-
-        for (std::size_t i = 0; i < c_.size(); ++i){
-            for (std::size_t j = 0; j < o.c_.size(); ++j){
-                res[i + j] += c_[i] * o.c_[j];
-            }
-        }
-        return {res};
-    }
-
-    polynomial operator*(Type m) const {
-        std::vector<Type> res = c_;
-        for (std::size_t i = 0; i < c_.size(); ++i){
-            res[i] = m * res[i];
-        }
-        return {res};
-    }
-    
-    polynomial operator/(Type m) const {
-        if (m == 0){
-            throw std::invalid_argument("divide on zero");
-        }
-        std::vector<Type> res = c_;
-        for (std::size_t i = 0; i < c_.size(); ++i){
-            res[i] /= m;
-        }
-        return {res};
+        double A = (i / 2.0) * iso_.n_ * R * (iso_.t_ - t);
+        return state(p, vlm, t, iso_.n_, A, iso_.Q_, iso_.S_);
     }
 };
 
-template <typename Type>
-std::ostream& operator<<(std::ostream& os, const polynomial<Type>& o){
-    const unsigned int r = 5;
-    std::vector<Type> res = o.data();
-    for (std::size_t i = 0; i < 5; ++i) {
-        os << res[i] << " ";
-    }
-    return os;
-}
+int main() {
+    std::ofstream p12("12.txt"), p23("23.txt"), p34("34.txt"), p41("41.txt");
 
-template <typename Type>
-polynomial<Type> sin(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> sin_({0});
-    polynomial cf = f;
-    const polynomial sqr = f * f;
+    const double T_heat = 300.0;
+    const double initial_volume = 0.1;
+    const double initial_pressure = 1e5;
+    
+    const double n = (initial_pressure * initial_volume) / (R * T_heat);
 
-    double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        double p = (i % 2 != 0) ? 1 : -1;
-        sin_ = sin_ + cf * (p / fact);
-        cf = cf * sqr;
-        fact *= (2 * i) * (2 * i + 1);
-    }
-    return {sin_};
-}
+    state s1(initial_pressure, initial_volume, T_heat, n);
+    isoprocess isoterm_1(s1);
+    state s2 = isoterm_1.isotermial(2 * initial_volume, p12);
 
-template <typename Type>
-polynomial<Type> cos(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> cos_({1});
-    polynomial<Type> cf({1});
-    const polynomial sqr = f * f;
+    isoprocess adiabat_2(s2);
+    const int i = 3;
+    state s3 = adiabat_2.adiabatic(4 * initial_volume, i, p23);
 
-    double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        double p = (i % 2 == 0) ? 1 : -1;
-        cf = cf * sqr;
-        fact *= (2 * i - 1) * (2 * i);
-        cos_ = cos_ + cf * (p / fact);
-    }
-    return {cos_};
-}
+    state s3_iso(s3.p_, s3.v_, s3.t_, s3.n_, 0, 0, s3.S_);
+    isoprocess p3(s3_iso);
+    state s4 = p3.isotermial(2 * initial_volume, p34);
+    
 
-template <typename Type>
-polynomial<Type> sh(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> sh_({0});
-    polynomial cf = f;
-    const polynomial sqr = f * f;
+    isoprocess p4(s4);
+    state s1_final = p4.adiabatic(initial_volume, i, p41);
 
-    double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        sh_ = sh_ + cf * (1 / fact);
-        cf = cf * sqr;
-        fact *= (2 * i) * (2 * i + 1);
-    }
-    return {sh_};
-}
-
-template <typename Type>
-polynomial<Type> ch(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> ch_({1});
-    const polynomial sqr = f * f;
-
-    double fact = 1;
-    polynomial<Type> cf ({1});
-    for (unsigned int i = 1; i <= r; ++i){
-        cf = cf * sqr;
-        fact *= (2 * i - 1) * (2 * i);
-        ch_ = ch_ + cf * (1 / fact);
-    }
-    return {ch_};
-}
-
-template <typename Type>
-polynomial<Type> exp(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> exp_({1});
-    polynomial<Type> cf ({1});
-    const polynomial sqr = f;
-
-    double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        cf = cf * sqr;
-        fact *= (i);
-        exp_ = exp_ + cf * (1 / fact);
-    }
-    return {exp_};
-}
-
-template <typename Type>
-polynomial<Type> ln(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial cf = f;
-    polynomial<Type> ln_({0});
-    polynomial<Type> ss({1});
-
-    if (cf[0] == 0){
-        return cf;
-    } else {
-        polynomial<Type> tmp = (cf / cf[0]) - ss;
-        const polynomial sqr = tmp;
-        for (unsigned int l = 1; l <= r; ++l){
-            double s = (l % 2 == 0) ? -1 : 1;
-            ln_ = ln_ + tmp * (s / l);
-            tmp = tmp * sqr;
-        }
-        double ucr = std::log(cf[0]);
-        polynomial<Type> ss ({ucr});
-        return {ln_ + ss};
-    }
-}
-
-template <typename Type>
-polynomial<Type> binomial(const polynomial<Type>& f, double alpha, unsigned int r = 5){
-    polynomial cf = f;
-    polynomial<Type> b_({1});
-
-    if (cf[0] == 0){
-        return cf;
-    } else {
-        polynomial<Type> ss({1});
-        polynomial<Type> tmp = (cf / cf[0]) - ss;
-        const polynomial sqr = tmp;
-        double fact = 1;
-        double u = 1;
-        for (unsigned int k = 1; k <= r; ++k){
-            u *= alpha - k + 1;
-            fact *= k;
-            b_ = b_ + tmp * (u / fact);
-            tmp = tmp * sqr;
-        }
-        double ucr = std::pow(cf[0], alpha);
-        polynomial<Type> pp ({ucr});
-        return {b_ * pp};
-    }
-}
-
-template <typename Type>
-polynomial<Type> tan(const polynomial<Type>& f){
-    polynomial tan_ = sin(f) * binomial(cos(f), -1);
-    return {tan_};
-}
-
-template <typename Type>
-polynomial<Type> tanh(const polynomial<Type>& f){
-    polynomial th_ = sh(f) * binomial(ch(f), -1);
-    return {th_};
-}
-
-template <typename Type>
-polynomial<Type> arctan(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial cf = f;
-    polynomial<Type> arctan_({0});
-    const polynomial sqr = f * f;
-
-    for (unsigned int i = 0; i < r; ++i){
-        double p = (i % 2 == 0) ? 1 : -1;
-        arctan_ = arctan_ + cf * (p / (2 * i + 1));
-        cf = cf * sqr;
-    }
-    return {arctan_};
-}
-
-template <typename Type>
-polynomial<Type> arcsin(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial cf = f;
-    const polynomial sqr = f * f;
-    polynomial<Type> arcsin_({0});
-
-    for (unsigned int i = 0; i <= r; ++i) {
-        double a = 1;
-        double b = 1;
-        for (unsigned int l = 1; l < 2 * i + 1; l += 2){
-            a *= l;
-        }
-        for (unsigned int h = 2; h < 2 * i + 2; h += 2){
-            b *= h;
-        }
-        arcsin_ = arcsin_ + cf * (a /(b * (2 * i + 1)));
-        cf = cf * sqr;
-    }
-    return {arcsin_};
-}
-
-template <typename Type>
-polynomial<Type> arccos(const polynomial<Type>& f, unsigned int r = 5){
-    const double pi = 3.1415926;
-    const polynomial<Type> ss ({pi / 2});
-
-    polynomial arccos_ = ss - arcsin(f);
-    return {arccos_};
+    std::ofstream data("cua.txt");
+    double theta = 1 - (std::abs(s4.Q_) / s2.Q_);
+    double A_cycle = s2.Q_ + s4.Q_;
+    data << theta << " " << A_cycle << " " << s2.Q_ << " " << std::abs(s4.Q_) << " " << T_heat << " " << s3.t_ << std::endl;
 }
