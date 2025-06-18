@@ -108,6 +108,54 @@ std::ostream& operator<<(std::ostream& os, const polynomial& o){
     return os;
 }
 
+class rational{
+    polynomial nom_;
+    polynomial denom_;
+public:
+    rational(const polynomial& m, const polynomial& n) : nom_(m), denom_(n) {
+        if (n.data() == std::vector<double>(n.data().size(), 0)) {
+            throw std::invalid_argument("divide by zero");
+        }
+    }
+
+    const polynomial& nom() const {return nom_;}
+    const polynomial& denom() const {return denom_;}
+
+    double operator()(double m) const {
+        double s = nom_(m);
+        double q = denom_(m);
+        return {s / q};
+    }
+    rational operator+(const rational& o) const {
+        polynomial s = nom_ * o.denom_ + o.nom_ * denom_;
+        polynomial q = denom_ * o.denom_;
+        return {s, q};
+    }
+
+    rational operator-(const rational& o) const {
+        polynomial s = nom_ * o.denom_ - o.nom_ * denom_;
+        polynomial q = denom_ * o.denom_;
+        return {s, q};
+    }
+
+    rational operator*(const rational& o) const {
+        polynomial s = nom_ * o.nom_;
+        polynomial q = denom_ * o.denom_;
+        return {s, q};
+    }
+
+    rational operator*(double m) const {
+        polynomial s = nom_ * m;
+        polynomial q = denom_;
+        return {s, q};
+    }
+
+    rational operator/(double m) const {
+        polynomial s = nom_;
+        polynomial q = denom_ * m;
+        return {s, q};
+    }
+};
 polynomial sin(const polynomial& f, unsigned int r = 5){
     polynomial sin_({0});
     polynomial cf = f;
