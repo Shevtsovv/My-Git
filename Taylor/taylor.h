@@ -1,29 +1,31 @@
-#pragma once
 #include <iostream>
 #include <vector>
 #include <cmath>
 
-template <typename Type>
 class polynomial{
-    std::vector<Type> c_;
+    std::vector<double> c_;
 public:
-    polynomial<Type>(const std::vector<Type>& c) : c_{c} {}
-
-    const std::vector<Type>& data() const {
+    polynomial(const std::vector<double>& c) : c_{c} {}
+    polynomial(const std::initializer_list<double> list){
+        for(const auto& item : list){
+            c_.push_back(item);
+        }
+    }
+    const std::vector<double>& data() const {
         return c_;
     }
 
-    Type operator[](std::size_t n) const {
+    double operator[](std::size_t n) const {
         return c_[n];
     }
 
-    Type& operator[](std::size_t n) {
+    double& operator[](std::size_t n) {
         return c_[n];
     }
     
-    Type operator()(Type m) const {
-        Type res = 0;
-        Type xx = 1;
+    double operator()(double m) const {
+        double res = 0;
+        double xx = 1;
         for (std::size_t i = 0; i < c_.size(); ++i){
             res += c_[i] * xx;
             xx *= m;
@@ -32,7 +34,7 @@ public:
     }
 
     polynomial operator+(const polynomial& o) const {
-        std::vector<Type> res = c_.size() < o.c_.size() ? o.c_ : c_;
+        std::vector<double> res = c_.size() < o.c_.size() ? o.c_ : c_;
         if (c_.size() < o.c_.size()){
             for (std::size_t i = 0; i < c_.size(); ++i){
                 res[i] += c_[i];
@@ -47,7 +49,7 @@ public:
 
     polynomial operator-(const polynomial& d) const {
         std::size_t ns = (c_.size() < d.c_.size()) ? d.c_.size() : c_.size();
-        std::vector<Type> res(ns, 0);
+        std::vector<double> res(ns, 0);
 
         if (c_.size() < d.c_.size()){
             for (std::size_t i = 0; i < c_.size(); ++i){
@@ -68,30 +70,32 @@ public:
     }
 
     polynomial operator*(const polynomial& o) const {
+        const unsigned int r = 7;
         std::size_t ns = c_.size() + o.c_.size() - 1;
-        std::vector<Type> res(ns, 0);
+        std::vector<double> res(ns, 0);
 
         for (std::size_t i = 0; i < c_.size(); ++i){
             for (std::size_t j = 0; j < o.c_.size(); ++j){
                 res[i + j] += c_[i] * o.c_[j];
             }
         }
+        res.resize(r);
         return {res};
     }
 
-    polynomial operator*(Type m) const {
-        std::vector<Type> res = c_;
+    polynomial operator*(double m) const {
+        std::vector<double> res = c_;
         for (std::size_t i = 0; i < c_.size(); ++i){
             res[i] = m * res[i];
         }
         return {res};
     }
     
-    polynomial operator/(Type m) const {
+    polynomial operator/(double m) const {
         if (m == 0){
             throw std::invalid_argument("divide on zero");
         }
-        std::vector<Type> res = c_;
+        std::vector<double> res = c_;
         for (std::size_t i = 0; i < c_.size(); ++i){
             res[i] /= m;
         }
@@ -99,18 +103,64 @@ public:
     }
 };
 
-template <typename Type>
-std::ostream& operator<<(std::ostream& os, const polynomial<Type>& o){
-    std::vector<Type> res = o.data();
-    for (std::size_t i = 0; i < res.size(); ++i) {
-        os << res[i] << " ";
+std::ostream& operator<<(std::ostream& os, const polynomial& o){
+    std::vector<double> res = o.data();
+    for (double c : res){
+        os << c << " ";
     }
     return os;
 }
 
-template <typename Type>
-polynomial<Type> sin(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> sin_({0});
+class rational{
+    polynomial nom_;
+    polynomial denom_;
+public:
+    rational(const polynomial& m, const polynomial& n) : nom_(m), denom_(n) {
+        if (n.data() == std::vector<double>(n.data().size(), 0)) {
+            throw std::invalid_argument("divide by zero");
+        }
+    }
+
+    const polynomial& nom() const {return nom_;}
+    const polynomial& denom() const {return denom_;}
+
+    double operator()(double m) const {
+        double s = nom_(m);
+        double q = denom_(m);
+        return {s / q};
+    }
+    rational operator+(const rational& o) const {
+        polynomial s = nom_ * o.denom_ + o.nom_ * denom_;
+        polynomial q = denom_ * o.denom_;
+        return {s, q};
+    }
+
+    rational operator-(const rational& o) const {
+        polynomial s = nom_ * o.denom_ - o.nom_ * denom_;
+        polynomial q = denom_ * o.denom_;
+        return {s, q};
+    }
+
+    rational operator*(const rational& o) const {
+        polynomial s = nom_ * o.nom_;
+        polynomial q = denom_ * o.denom_;
+        return {s, q};
+    }
+
+    rational operator*(double m) const {
+        polynomial s = nom_ * m;
+        polynomial q = denom_;
+        return {s, q};
+    }
+
+    rational operator/(double m) const {
+        polynomial s = nom_;
+        polynomial q = denom_ * m;
+        return {s, q};
+    }
+};
+polynomial sin(const polynomial& f, unsigned int r = 5){
+    polynomial sin_({0});
     polynomial cf = f;
     const polynomial sqr = f * f;
 
@@ -124,10 +174,9 @@ polynomial<Type> sin(const polynomial<Type>& f, unsigned int r = 5){
     return {sin_};
 }
 
-template <typename Type>
-polynomial<Type> cos(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> cos_({1});
-    polynomial<Type> cf({1});
+polynomial cos(const polynomial& f, unsigned int r = 5){
+    polynomial cos_({1});
+    polynomial cf = polynomial({1});
     const polynomial sqr = f * f;
 
     double fact = 1;
@@ -140,28 +189,26 @@ polynomial<Type> cos(const polynomial<Type>& f, unsigned int r = 5){
     return {cos_};
 }
 
-template <typename Type>
-polynomial<Type> sh(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> sh_({0});
+polynomial sh(const polynomial& f, unsigned int r = 5){
+    polynomial sin_({0});
     polynomial cf = f;
     const polynomial sqr = f * f;
 
     double fact = 1;
     for (unsigned int i = 1; i <= r; ++i){
-        sh_ = sh_ + cf * (1 / fact);
+        sin_ = sin_ + cf * (1 / fact);
         cf = cf * sqr;
         fact *= (2 * i) * (2 * i + 1);
     }
-    return {sh_};
+    return {sin_};
 }
 
-template <typename Type>
-polynomial<Type> ch(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> ch_({1});
+polynomial ch(const polynomial& f, unsigned int r = 5){
+    polynomial ch_({1});
+    polynomial cf = polynomial({1});
     const polynomial sqr = f * f;
 
     double fact = 1;
-    polynomial<Type> cf ({1});
     for (unsigned int i = 1; i <= r; ++i){
         cf = cf * sqr;
         fact *= (2 * i - 1) * (2 * i);
@@ -170,13 +217,12 @@ polynomial<Type> ch(const polynomial<Type>& f, unsigned int r = 5){
     return {ch_};
 }
 
-template <typename Type>
-polynomial<Type> exp(const polynomial<Type>& f, unsigned int r = 5){
-    polynomial<Type> exp_({1});
+polynomial exp(const polynomial& f, unsigned int r = 5){
+    polynomial exp_({1});
+    polynomial cf = polynomial({1});
     const polynomial sqr = f;
 
     double fact = 1;
-    polynomial<Type> cf ({1});
     for (unsigned int i = 1; i <= r; ++i){
         cf = cf * sqr;
         fact *= (i);
@@ -185,16 +231,14 @@ polynomial<Type> exp(const polynomial<Type>& f, unsigned int r = 5){
     return {exp_};
 }
 
-template <typename Type>
-polynomial<Type> ln(const polynomial<Type>& f, unsigned int r = 5){
+polynomial ln(const polynomial& f, unsigned int r = 5){
     polynomial cf = f;
-    polynomial<Type> ln_({0});
+    polynomial ln_({0});
 
     if (cf[0] == 0){
-        return cf;
+        throw std::invalid_argument("not taylor polynomial");
     } else {
-        polynomial<Type> ss({1});
-        polynomial<Type> tmp = (cf / cf[0]) - ss;
+        polynomial tmp = (cf / cf[0]) - polynomial({1});
         const polynomial sqr = tmp;
         for (unsigned int l = 1; l <= r; ++l){
             double s = (l % 2 == 0) ? -1 : 1;
@@ -202,21 +246,18 @@ polynomial<Type> ln(const polynomial<Type>& f, unsigned int r = 5){
             tmp = tmp * sqr;
         }
         double ucr = std::log(cf[0]);
-        polynomial<Type> mm ({ucr});
-        return {ln_ + mm};
+        return {ln_ + polynomial({ucr})};
     }
 }
 
-template <typename Type>
-polynomial<Type> binomial(const polynomial<Type>& f, double alpha, unsigned int r = 5){
+polynomial binomial(const polynomial& f, double alpha, unsigned int r = 5){
     polynomial cf = f;
-    polynomial<Type> b_({1});
+    polynomial b_({1});
 
     if (cf[0] == 0){
-        return cf;
+        throw std::invalid_argument("not taylor polynomial");
     } else {
-        polynomial<Type> ss({1});
-        polynomial<Type> tmp = (cf / cf[0]) - ss;
+        polynomial tmp = (cf / cf[0]) - polynomial({1});
         const polynomial sqr = tmp;
         double fact = 1;
         double u = 1;
@@ -227,27 +268,41 @@ polynomial<Type> binomial(const polynomial<Type>& f, double alpha, unsigned int 
             tmp = tmp * sqr;
         }
         double ucr = std::pow(cf[0], alpha);
-        polynomial<Type> pp ({ucr});
-        return {b_ * pp};
+        return {b_ * ucr};
     }
 }
 
-template <typename Type>
-polynomial<Type> tan(const polynomial<Type>& f){
-    polynomial tan_ = sin(f) * binomial(cos(f), -1);
+polynomial frac(const polynomial& f, unsigned int r = 5){
+    polynomial cf = f;
+    polynomial fr_({1});
+    if (cf[0] == 0){
+        throw std::invalid_argument("is not taylor");
+    } else {
+        polynomial tmp = (cf / cf[0]) - polynomial({1});
+        const polynomial sqr = tmp;
+        for (unsigned int i = 0; i <= r; ++i){
+            double a = (i % 2 == 0) ? -1 : 1;
+            fr_ = fr_ + tmp * a;
+            tmp = tmp * sqr;
+        }
+        double ucr = 1.0 / cf[0];
+        return {fr_ * ucr};
+    }
+}
+
+polynomial tan(const polynomial& f){
+    polynomial tan_ = sin(f) * frac(cos(f));
     return {tan_};
 }
 
-template <typename Type>
-polynomial<Type> tanh(const polynomial<Type>& f){
-    polynomial th_ = sh(f) * binomial(ch(f), -1);
+polynomial tanh(const polynomial& f){
+    polynomial th_ = sh(f) * frac(ch(f));
     return {th_};
 }
 
-template <typename Type>
-polynomial<Type> arctan(const polynomial<Type>& f, unsigned int r = 5){
+polynomial arctan(const polynomial& f, unsigned int r = 5){
     polynomial cf = f;
-    polynomial<Type> arctan_({0});
+    polynomial arctan_({0});
     const polynomial sqr = f * f;
 
     for (unsigned int i = 0; i < r; ++i){
@@ -258,11 +313,10 @@ polynomial<Type> arctan(const polynomial<Type>& f, unsigned int r = 5){
     return {arctan_};
 }
 
-template <typename Type>
-polynomial<Type> arcsin(const polynomial<Type>& f, unsigned int r = 5){
+polynomial arcsin(const polynomial& f, unsigned int r = 5){
     polynomial cf = f;
     const polynomial sqr = f * f;
-    polynomial<Type> arcsin_({0});
+    polynomial arcsin_({0});
 
     for (unsigned int i = 0; i <= r; ++i) {
         double a = 1;
@@ -279,66 +333,9 @@ polynomial<Type> arcsin(const polynomial<Type>& f, unsigned int r = 5){
     return {arcsin_};
 }
 
-template <typename Type>
-polynomial<Type> arccos(const polynomial<Type>& f, unsigned int r = 5){
+polynomial arccos(const polynomial& f, unsigned int r = 5){
     const double pi = 3.1415926;
-    const polynomial<Type> ss ({pi / 2});
 
-    polynomial arccos_ = ss - arcsin(f);
+    polynomial arccos_ = polynomial({pi / 2}) - arcsin(f);
     return {arccos_};
-}
-
-template <typename Type>
-class rational{
-    polynomial<Type> nom_;
-    polynomial<Type> denom_;
-public:
-    rational(const polynomial<Type>& m, const polynomial<Type>& n) : nom_(m), denom_(n) {}
-
-    const polynomial<Type>& nom() const {return nom_;}
-    const polynomial<Type>& denom() const {return denom_;}
-
-    Type operator()(Type m) const {
-        Type s = nom_(m);
-        Type q = denom_(m);
-        return {s / q};
-    }
-    rational operator+(const rational& o) const {
-        polynomial<Type> s = nom_ * o.denom_ + o.nom_ * denom_;
-        polynomial<Type> q = denom_ * o.denom_;
-        return {s, q};
-    }
-
-    rational operator-(const rational& o) const {
-        polynomial<Type> s = nom_ * o.denom_ - o.nom_ * denom_;
-        polynomial<Type> q = denom_ * o.denom_;
-        return {s, q};
-    }
-
-    rational operator*(const rational& o) const {
-        polynomial<Type> s = nom_ * o.nom_;
-        polynomial<Type> q = denom_ * o.denom_;
-        return {s, q};
-    }
-
-    rational operator*(Type m) const {
-        polynomial<Type> s = nom_ * m;
-        polynomial<Type> q = denom_;
-        return {s, q};
-    }
-
-    rational operator/(Type m) const {
-        polynomial<Type> s = nom_;
-        polynomial<Type> q = denom_ * m;
-        return {s, q};
-    }
-
-};
-
-template <typename Type>
-std::ostream& operator<<(std::ostream& os, const rational<Type>& f) {
-    polynomial<Type> t = f.nom();
-    polynomial<Type> k = f.denom();
-    os << t << " / " << k;
-    return os;
 }
