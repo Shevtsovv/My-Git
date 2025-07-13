@@ -1,225 +1,167 @@
-#pragma once
 #include <iostream>
-#include <initializer_list>
-
-template<typename T>
-class subvector
-{
-    private:
-    //Последний элемент вектора
-    size_t top;
-    //Емкость вектора
-    size_t capacity;
-    //Указатель на линейную комбинацию данных в векторе
-    T* subvec;
-    //Поиск максимума из двух чисел
-    public:
-    //Конструктор для subvector: вершина, емкость и указатель на ЛК по нулям
-    subvector(): top(0), capacity(0), subvec(nullptr){}
-    //Конструктор копирования, защита от двойного вызова деструктора при копировании
-    subvector(const subvector& other): top(other.top), capacity(other.capacity), subvec(new T[other.capacity])
-    {
-        for(size_t i = 0; i < top; ++i)
-        {
-            subvec[i] = other.subvec[i];
+#include <vector>
+const double alpha = 1e-7;
+class subvector{
+    double* qv_;
+    std::size_t top_;
+    std::size_t capacity_;
+public:
+    subvector() : qv_(nullptr), top_(0), capacity_(0){}
+    ~subvector(){
+        delete[] qv_;
+    }
+    subvector(const std::initializer_list<double> list) : qv_(nullptr), top_(list.size()), capacity_(2 * list.size()){
+        std::size_t i = 0;
+        qv_ = new double[capacity_];
+        std::copy(list.begin(), list.end(), qv_);
+    }
+    subvector(const subvector& o) : qv_(nullptr), top_(o.top_), capacity_(o.capacity_){
+        qv_ = new double[o.capacity_];
+        for(std::size_t i = 0; i < o.top_; ++i){
+            qv_[i] = o.qv_[i];
         }
     }
-    //Конструктор list для subvector
-    subvector(const std::initializer_list<T> list_init): top(0), capacity(0), subvec(nullptr){
-        for(const auto& item: list_init){
-            sub_push_back(item);
-        }
+    subvector(subvector&& o) : qv_(o.qv_), top_(o.top_), capacity_(o.capacity_){
+        o.qv_ = nullptr;
+        o.top_ = 0;
+        o.capacity_ = 0;
     }
-    //Оператор [] для работы с вектором
-    T& operator[](size_t index) const{
-        if(index >= top){
-            throw std::invalid_argument("Index is out of range!");
-        }
-        return subvec[index];
-    }
-    //Оператор присваивания, новые данные записываются в новый вектор
-    subvector& operator=(const subvector& other)
-    {
-        if(this != &other){
-            T* subvecx = new (std::nothrow) T[other.capacity];
-            if(!subvecx){
-                throw std::bad_alloc();
+    subvector& operator=(const subvector& o){
+        if(this != &o){
+            delete[] qv_;
+            qv_ = new double[o.capacity_];
+            for(std::size_t i = 0; i < o.top_; ++i){
+                qv_[i] = o.qv_[i];
             }
-            for(size_t i = 0; i < other.top; ++i){
-                subvec[i] = other.subvec[i];
-            }
-            delete[] subvec;
-            subvec = subvecx;
-            top = other.top;
-            capacity = other.capacity;
+            capacity_ = o.capacity_;
+            top_ = o.top_;
         }
         return *this;
     }
-    ~subvector()
-    {
-        if(subvec){delete[] subvec;}
+    subvector& operator=(subvector&& o){
+        if(this != &o){
+            qv_ = o.qv_;
+            top_ = o.top_;
+            capacity_ = o.capacity_;
+            o.qv_ = nullptr;
+            o.top_ = 0;
+            o.capacity_ = 0;
+        }
+        return *this;
     }
-    //Инициализация пустого вектора
-    bool sub_init()
-    {
-        subvec = nullptr;
-        top = 0;
-        capacity = 0;
-        return true;
+    double* begin(){return qv_;}
+    const double* begin() const {return qv_;}
+    double* end(){return qv_ + top_;}
+    const double* end() const {return qv_ + top_;}
+    double& operator[](std::size_t n){
+        if(n >= top_){throw std::invalid_argument("index is out of range");}
+        return qv_[n];
     }
-    //Поиск максимума из двух size_t чисел
-    size_t supremum(size_t a, size_t b){
-        return (a > b) ? a : b; 
+    double operator[](std::size_t n) const {
+        if(n >= top_){throw std::invalid_argument("index is out of range");}
+        return qv_[n];
     }
-    //Поиск минимума из двух size_t чисел
-    size_t infinum(size_t a, size_t b)
-    {
-        return (a > b) ? b : a;
+    bool operator==(const subvector& o) const {
+        for(std::size_t i = 0; i < top_; ++i){
+            if(std::abs(qv_[i] - o.qv_[i]) > alpha){return false;}
+        }
+        return (top_ == o.top_);
     }
-    //Добавление элемента в конец вектора с выделением памяти при необходимости
-    bool sub_push_back(const T& value)
-    {
-        if(top >= capacity){
-            size_t mod_capacity = (capacity == 0) ? 1 : 2 * capacity;
-            T* extra = new (std::nothrow) T[mod_capacity];
-            if(!extra){
-                //throw std::bad_alloc();
-                return false;
-            }
-            for(unsigned int i = 0; i < top; ++i){
-                extra[i] = subvec[i];
-            }
-            delete[] subvec;
-            subvec = extra;
-            capacity = mod_capacity;
+    bool empty() const {return top_ == 0;}
+    const std::size_t& size() const {return top_;}
+    const std::size_t& capacity() const {return capacity_;}
+    void clear() {top_ = 0;}
+    void push_back(double a){
+        if(top_ >= capacity_){
+            std::size_t o_capacity_ = (capacity_ == 0) ? 1 : 2 * capacity_;
+            double* o_qv_ = new double[o_capacity_];
+            std::copy(qv_, qv_ + top_, o_qv_);
+            delete[] qv_;
+            qv_ = o_qv_;
+            capacity_ = o_capacity_;
         }
-        subvec[top++] = value;
-        return true;
+        qv_[top_++] = a;
+        return;
     }
-    //Вставка одного или нескольких значений в вектор с выделением памяти при необходимости
-    void sub_insert(size_t pos, size_t amount, double value)
-    {
-        //Указатель по номер элемента вектора после вставки одного или нескольких значений 
-        if(pos > top){
-            throw std::invalid_argument("Subvector's index in out of range!");
-        }
-        size_t sub_paste = pos + amount;
-        if(sub_paste > capacity){
-            //T* subvec1 = top;
-            size_t mod_capacity = supremum(sub_paste, capacity * 2);
-            T* subvec1 = new (std::nothrow) T[mod_capacity];
-            if(!subvec1){
-                throw std::bad_alloc();
-            }
-            for(size_t i = 0; i < pos; ++i){
-                subvec1[i] = subvec[i];
-            }
-            for(size_t i = 0; i < amount; ++i){
-                subvec1[pos + i] = value;
-            }
-            for(size_t i = pos; i < top; ++i){
-                subvec1[i + amount] = subvec[i];
-            }
-            delete[] subvec;
-            subvec = subvec1;
-            capacity = mod_capacity;
-        } else
-        {
-            for(size_t i = top; i >= pos; --i){
-                subvec[i + amount - 1] = subvec[i - 1];
-            }
-            for(size_t i = pos; i < sub_paste; ++i){
-                subvec[i] = value;
-            }
-        }
-        top += amount;
+    void pop_back(){
+        if(empty()){throw std::invalid_argument("vector is empty");}
+        top_--;
+        return;
     }
-    //Удаление элемента из конца списка, функция вернет значение, если оно ненулевое
-    T sub_pop_back(){
-        if(top == 0){
-            throw std::out_of_range("Subvector is empty!");
-        }
-        top--;
-        T value = subvec[top];
-        return value;
-    }
-    //Удаление элемента из любого места вектора
-    bool sub_erase(size_t pos){
-        if(pos > top){
-            throw std::out_of_range("Index of vector in out of range!");
-        }
-        for(unsigned int i = pos; i < top; ++i){
-            subvec[i] = subvec[i + 1];
-        }
-        top--;
-        return true;
-    }
-    //Изменение ёмкости вектора при необходимости
-    bool sub_resize(size_t mod_capacity) {
-        if (mod_capacity == capacity) return true;
-
-        if (mod_capacity == 0) {
-            delete[] subvec;
-            subvec = nullptr;
-            top = capacity = 0;
-            return true;
-        }
-        T* qv = new T[mod_capacity];
-        size_t elements_to_copy = infinum(top, mod_capacity);
-        //Копируем существующие элементы: в исходный вектор, если inf = top, и в "урезанный вектор", если inf = mod_capacity
-        for(size_t i = 0; i < elements_to_copy; ++i) {
-            qv[i] = subvec[i];
-        }
-        //Инициализируем новые элементы (если увеличиваем размер)
-        if (mod_capacity > capacity) {
-            for(size_t i = capacity; i < mod_capacity; ++i) {
-                qv[i] = T();
-            }
-        }
-        delete[] subvec;
-        subvec = qv;
-        capacity = mod_capacity;
-        //Обновляем top, если новый размер меньше
-        if (mod_capacity < top) {
-            top = mod_capacity;
-        }
-        return true;
-    }
-    //Очищение неиспользуемой памяти с уменьшением capacity до top
-    void sub_shrink_to_fit(){
-        if(top == 0){
-            delete[] subvec;
-            sub_init();
-        }
-        if(top > 0){
-            T* temp = new T[top];
-            for(size_t i = 0; i < top; ++i){
-                temp[i] = subvec[i];
-            }
-            delete[] subvec;
-            subvec = temp;
-            capacity = top;
-        }
-    }
-    //Очищение содержимого вектора, занимаемая память не меняется
-    void sub_clear(){
-        top = 0;
-    }
-    //Размер вектора, функция вернет ноль, если он пустой
-    size_t sub_size() const{
-        if(top == 0){
-            return 0;
+    void insert(std::size_t position, std::size_t amount, double a){
+        if(position > top_){throw std::invalid_argument("index is out of range");}
+        std::size_t s = top_ + amount;
+        if(s >= capacity_){
+            std::size_t o_capacity_ = std::max(s, 2 * capacity_);
+            double* o_qv_ = new double[o_capacity_];
+            std::copy(qv_, qv_ + position, o_qv_);
+            std::fill(o_qv_ + position, o_qv_ + position + amount, a);
+            std::copy(qv_ + position, qv_ + top_, o_qv_ + position + amount);
+            delete[] qv_;
+            qv_ = o_qv_;
+            capacity_ = o_capacity_;
         } else{
-            return top;
+            std::copy_backward(qv_ + position, qv_ + top_, qv_ + top_ + amount);
+            std::fill(qv_ + position, qv_ + position + amount, a);
         }
+        top_ = s;
+        return;
     }
-    //Значение ёмкости вектора
-    size_t sub_capacity() const{
-        return capacity;
+    void shrink_to_fit(){
+        if(top_ == 0){
+            delete[] qv_;
+            qv_ = nullptr;
+            capacity_ = 0;
+        } else{
+            double* o_qv_ = new double[top_];
+            std::copy(qv_, qv_ + top_, o_qv_);
+            delete[] qv_;
+            qv_ = o_qv_;
+            capacity_ = top_;
+        }
+        return;
     }
-
-    //Проверка векторы на пустоту, функция возращает top == 0;
-    bool sub_empty() const{
-        return top == 0;
+    void erase(std::size_t position){
+        if(position > top_){throw std::invalid_argument("index is out of range");}
+        for(std::size_t i = position; i < top_; ++i){
+            qv_[i] = qv_[i + 1];
+        }
+        top_--;
+        return;
+    }
+    void resize(std::size_t o_top_){
+        if(o_top_ == top_){return;}
+        if(o_top_ == 0){
+            delete[] qv_;
+            qv_ = nullptr;
+            top_ = 0;
+            capacity_ = 0;
+        }
+        if(o_top_ > top_){
+            std::size_t s = std::max(o_top_, 2 * capacity_);
+            double* o_qv_ = new double[s];
+            std::copy(qv_, qv_ + top_, o_qv_);
+            std::fill(o_qv_ + top_, o_qv_ + o_top_, 0);
+            delete[] qv_;
+            qv_ = o_qv_;
+            capacity_ = s;
+            top_ = o_top_;
+        } else{
+            std::size_t g = std::max(2 * o_top_, capacity_);
+            capacity_ = g;
+            top_ = o_top_;
+        }
+        return;
     }
 };
+std::ostream& operator<<(std::ostream& os, const subvector& f){
+    std::size_t i = 0;
+    for(const double& c : f){
+        os << c << " ";
+    }
+    return os;
+}
+int main() {
+    subvector v = {1, 2, 3};
+    v.resize(2);
+}
