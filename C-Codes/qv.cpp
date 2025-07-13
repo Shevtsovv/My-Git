@@ -8,11 +8,12 @@ class subvector{
 public:
     subvector() : capacity_(0), top_(0), qv_(nullptr){}
     subvector(const subvector& o) : capacity_(o.capacity_), top_(o.top_), qv_(nullptr){
+        qv_ = new double[capacity_];
         for(std::size_t i = 0; i < top_; ++i){
             qv_[i] = o.qv_[i];
         }
     }
-    subvector(std::size_t n_, double a) : top_(n_), capacity_(2 * n_), qv_(new double[n_]){
+    subvector(std::size_t n_, double a) : top_(n_), capacity_(n_), qv_(new double[n_]){
         for(std::size_t i = 0; i < top_; ++i){
             qv_[i] = a;
         }
@@ -38,7 +39,7 @@ public:
             for(std::size_t i = 0; i < o.top_; ++i){
                 qv_[i] = o.qv_[i];
             }
-            top_ = o.top_;
+            top_ = std::min(o.top_, o.capacity_);
             capacity_ = o.capacity_;
         }
         return *this;
@@ -74,7 +75,7 @@ public:
     }
     void push_back(double a){
         if(top_ >= capacity_){
-            std::size_t c = (capacity_ == 0) ? 1 : 3 * capacity_;
+            std::size_t c = (capacity_ == 0) ? 1 : 2 * capacity_;
             double* o_qv_ = new double[c];
             for(std::size_t i = 0; i < top_; ++i){
                 o_qv_[i] = qv_[i];
@@ -100,12 +101,8 @@ class polynomial{
     subvector c_;
 public:
     polynomial(const subvector& c) : c_(c){}
-    polynomial(const std::initializer_list<double> list){
-        for(const double& item : list){
-            c_.push_back(item);
-        }
-    }
-    const subvector& data() {return c_;}
+    polynomial(const std::initializer_list<double> list) : c_(list){}
+    const subvector& data() const {return c_;}
     double operator[](std::size_t i) const {return c_[i];}
     double& operator[](std::size_t i){return c_[i];}
     bool operator==(const polynomial& o) const {return c_ == o.c_;}
@@ -140,6 +137,7 @@ public:
     }
     polynomial operator*(const polynomial& o) const {
         std::size_t s = c_.size() + o.c_.size() - 1;
+        if (s == 0) return polynomial{{}};
         subvector res(s, 0);
         for(std::size_t i = 0; i < c_.size(); ++i){
             for(std::size_t j = 0; j < o.c_.size(); ++j){
@@ -164,3 +162,14 @@ public:
         return {res};
     }
 };
+std::ostream& operator<<(std::ostream& os, const polynomial& f){
+    for(const double& c : f.data()){
+        os << c << " ";
+    }
+    return os;
+}
+int main(){
+    polynomial a = {1, 1};
+    polynomial b = {1, 1};
+    std::cout << a * b;
+}
