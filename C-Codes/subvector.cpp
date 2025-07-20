@@ -1,8 +1,8 @@
 #include <iostream>
-#include <vector>
-const double alpha = 1e-7;
+#include <string>
+template <typename T>
 class subvector{
-    double* qv_;
+    T* qv_;
     std::size_t top_;
     std::size_t capacity_;
 public:
@@ -10,102 +10,93 @@ public:
     ~subvector(){
         delete[] qv_;
     }
-    subvector(const std::initializer_list<double> list) : qv_(nullptr), top_(list.size()), capacity_(2 * list.size()){
-        std::size_t i = 0;
-        qv_ = new double[capacity_];
-        std::copy(list.begin(), list.end(), qv_);
-    }
-    subvector(const subvector& o) : qv_(nullptr), top_(o.top_), capacity_(o.capacity_){
-        qv_ = new double[o.capacity_];
-        for(std::size_t i = 0; i < o.top_; ++i){
-            qv_[i] = o.qv_[i];
+    subvector(std::size_t _size, T& a) : qv_(nullptr), top_(_size), capacity_(_size){
+        qv_ = new T[capacity_];
+        for(std::size_t l = 0; l < top_; ++l){
+            qv_[l] = a;
         }
     }
-    subvector(subvector&& o) : qv_(o.qv_), top_(o.top_), capacity_(o.capacity_){
-        o.qv_ = nullptr;
-        o.top_ = 0;
-        o.capacity_ = 0;
+    subvector(const std::initializer_list<T> _list) : qv_(nullptr), top_(_list.size()), capacity_(_list.size()){
+        qv_ = new T[capacity_];
+        std::copy(_list.begin(), _list.end(), qv_);
     }
-    subvector& operator=(const subvector& o){
-        if(this != &o){
-            delete[] qv_;
-            qv_ = new double[o.capacity_];
-            for(std::size_t i = 0; i < o.top_; ++i){
-                qv_[i] = o.qv_[i];
-            }
-            capacity_ = o.capacity_;
-            top_ = o.top_;
+    subvector(const subvector& _o) : qv_(nullptr), top_(_o.top_), capacity_(_o.capacity_){
+        qv_ = new T[capacity_];
+        for(std::size_t l = 0; l < top_; ++l){
+            qv_[l] = _o.qv_[l];
+        }
+    }
+    subvector(subvector&& _o) noexcept : qv_(_o.qv_), top_(_o.top_), capacity_(_o.capacity_) {
+        _o.qv_ = nullptr;
+        _o.top_ = 0, _o.capacity_ = 0;
+    }
+    subvector& operator=(const subvector& _o) {
+    if (this != &_o) {
+        T* new_data = new T[_o.capacity_];
+        for (std::size_t l = 0; l < _o.top_; ++l) {
+            new_data[l] = _o.qv_[l];
+        }
+        delete[] qv_;
+        qv_ = new_data;
+        top_ = _o.top_;
+        capacity_ = _o.capacity_;
+    }
+    return *this;
+}
+    subvector& operator=(subvector&& _o) noexcept {
+        if(this != &_o){
+            qv_ = _o.qv_;
+            top_ = _o.top_, capacity_ = _o.capacity_;
+            _o.top_ = 0, _o.capacity_ = 0;
         }
         return *this;
     }
-    subvector& operator=(subvector&& o){
-        if(this != &o){
-            qv_ = o.qv_;
-            top_ = o.top_;
-            capacity_ = o.capacity_;
-            o.qv_ = nullptr;
-            o.top_ = 0;
-            o.capacity_ = 0;
-        }
-        return *this;
+    T operator[](std::size_t _index) const {
+        if(_index > top_){throw std::invalid_argument("is out of range");}
+        return qv_[_index];
     }
-    double* begin(){return qv_;}
-    const double* begin() const {return qv_;}
-    double* end(){return qv_ + top_;}
-    const double* end() const {return qv_ + top_;}
-    double& operator[](std::size_t n){
-        if(n >= top_){throw std::invalid_argument("index is out of range");}
-        return qv_[n];
+    T& operator[](std::size_t _index){
+        if(_index > top_) {throw std::invalid_argument("is out of range");}
+        return qv_[_index];
     }
-    double operator[](std::size_t n) const {
-        if(n >= top_){throw std::invalid_argument("index is out of range");}
-        return qv_[n];
-    }
-    bool operator==(const subvector& o) const {
-        for(std::size_t i = 0; i < top_; ++i){
-            if(std::abs(qv_[i] - o.qv_[i]) > alpha){return false;}
-        }
-        return (top_ == o.top_);
-    }
-    bool empty() const {return top_ == 0;}
-    const std::size_t& size() const {return top_;}
-    const std::size_t& capacity() const {return capacity_;}
-    void clear() {top_ = 0;}
-    void push_back(double a){
+    T* begin() {return qv_;}
+    const T* begin() const {return qv_;}
+    T* end() {return qv_ + top_;}
+    const T* end() const {return qv_ + top_;}
+    void push_back(T& _a){
         if(top_ >= capacity_){
-            std::size_t o_capacity_ = (capacity_ == 0) ? 1 : 2 * capacity_;
-            double* o_qv_ = new double[o_capacity_];
-            std::copy(qv_, qv_ + top_, o_qv_);
+            std::size_t __capacity = (capacity_ == 0) ? 1 : 2 * capacity_;
+            T* res = new T[__capacity];
+            for(std::size_t l = 0; l < top_; ++l){
+                res[l] = qv_[l];
+            }
             delete[] qv_;
-            qv_ = o_qv_;
-            capacity_ = o_capacity_;
+            qv_ = res;
+            capacity_ = __capacity;
         }
-        qv_[top_++] = a;
-        return;
+        qv_[top_++] = _a;
+    }
+    bool empty() const {
+        return (top_ == 0);
+    }
+    bool operator==(const subvector& _o) const {
+        static_assert(std::is_same_v<decltype(std::declval<T>() == std::declval<T>()), bool>, "Type T must support operator==");
+        if(empty() && _o.empty()){
+            return true;
+        }
+        if(top_ != _o.top_){
+            return false;
+        }
+        for(std::size_t i = 0; i < top_; ++i){
+            if(qv_[i] != _o.qv_[i]){return false;}
+        }
+        return true;
     }
     void pop_back(){
-        if(empty()){throw std::invalid_argument("vector is empty");}
-        top_--;
-        return;
-    }
-    void insert(std::size_t position, std::size_t amount, double a){
-        if(position > top_){throw std::invalid_argument("index is out of range");}
-        std::size_t s = top_ + amount;
-        if(s >= capacity_){
-            std::size_t o_capacity_ = std::max(s, 2 * capacity_);
-            double* o_qv_ = new double[o_capacity_];
-            std::copy(qv_, qv_ + position, o_qv_);
-            std::fill(o_qv_ + position, o_qv_ + position + amount, a);
-            std::copy(qv_ + position, qv_ + top_, o_qv_ + position + amount);
-            delete[] qv_;
-            qv_ = o_qv_;
-            capacity_ = o_capacity_;
-        } else{
-            std::copy_backward(qv_ + position, qv_ + top_, qv_ + top_ + amount);
-            std::fill(qv_ + position, qv_ + position + amount, a);
+        if(top_ == 0){
+            throw std::invalid_argument("vector is empty");
         }
-        top_ = s;
-        return;
+        top_--;
     }
     void shrink_to_fit(){
         if(top_ == 0){
@@ -113,55 +104,91 @@ public:
             qv_ = nullptr;
             capacity_ = 0;
         } else{
-            double* o_qv_ = new double[top_];
-            std::copy(qv_, qv_ + top_, o_qv_);
+            T* res = new T[top_];
+            for(std::size_t l = 0; l < top_; ++l){
+                res[l] = qv_[l];
+            }
             delete[] qv_;
-            qv_ = o_qv_;
+            qv_ = res;
             capacity_ = top_;
         }
-        return;
     }
-    void erase(std::size_t position){
-        if(position > top_){throw std::invalid_argument("index is out of range");}
-        for(std::size_t i = position; i < top_; ++i){
+    void erase(std::size_t _pos){
+        if(_pos > top_){throw std::invalid_argument("index is out of range");}
+        for(std::size_t i = _pos; i < top_; ++i){
             qv_[i] = qv_[i + 1];
         }
         top_--;
-        return;
     }
-    void resize(std::size_t o_top_){
-        if(o_top_ == top_){return;}
-        if(o_top_ == 0){
-            delete[] qv_;
-            qv_ = nullptr;
-            top_ = 0;
-            capacity_ = 0;
+    void clear(){
+        delete[] qv_;
+        qv_= nullptr;
+        top_ = 0, capacity_ = 0;
+    }
+    void resize(std::size_t _other_size) {
+        if (_other_size == top_) {return;}
+        if (_other_size == 0) {clear();}
+        T* res = new T[_other_size];
+        std::size_t copy_size = std::min(top_, _other_size);
+        for (std::size_t l = 0; l < copy_size; ++l) {
+            res[l] = qv_[l];
         }
-        if(o_top_ > top_){
-            std::size_t s = std::max(o_top_, 2 * capacity_);
-            double* o_qv_ = new double[s];
-            std::copy(qv_, qv_ + top_, o_qv_);
-            std::fill(o_qv_ + top_, o_qv_ + o_top_, 0);
-            delete[] qv_;
-            qv_ = o_qv_;
-            capacity_ = s;
-            top_ = o_top_;
-        } else{
-            std::size_t g = std::max(2 * o_top_, capacity_);
-            capacity_ = g;
-            top_ = o_top_;
+        if (_other_size > copy_size) {
+            for (std::size_t l = copy_size; l < _other_size; ++l) {
+                res[l] = T();
+            }
         }
-        return;
+        delete[] qv_;
+        qv_ = res;
+        top_ = _other_size;
+        capacity_ = _other_size;
+    }
+    void insert(std::size_t _pos, std::size_t _n, T& _a){
+        if(_pos > top_){throw std::invalid_argument("index is out of range");}
+        if(_n == 0){return;}
+        std::size_t size = top_ + _n, capacity = std::max(size, 2 * capacity_);
+        T* res = new T[capacity];
+        for(std::size_t i = 0; i < _pos; ++i){
+            res[i] = qv_[i];
+        }
+        for (std::size_t i = 0; i < _n; ++i) {
+            res[_pos + i] = _a;
+        }
+        for(std::size_t l = _pos; l < top_; ++l){
+            res[l + _n] = qv_[l];
+        }
+        delete[] qv_;
+        qv_ = res;
+        top_ = size, capacity_ = capacity;
+    }
+    void push_front(T& _a){
+        if(top_ >= capacity_){
+            std::size_t capacity = (capacity_ == 0) ? 1 : 2 * capacity_;
+            T* res = new T[capacity];
+            res[0] = _a;
+            for(std::size_t l = 0; l < top_; ++l){
+                res[l + 1] = qv_[l];
+            }
+            delete[] qv_;
+            qv_ = res;
+            capacity_ = capacity;
+        }
+        top_++;
+    }
+    void pop_front(){
+        if(top_ == 0){
+            throw std::invalid_argument("vector is empty");
+        }
+        for(std::size_t l = 0; l < top_ - 1; ++l){
+            qv_[l] = qv_[l + 1];
+        }
+        top_--;
     }
 };
-std::ostream& operator<<(std::ostream& os, const subvector& f){
-    std::size_t i = 0;
-    for(const double& c : f){
-        os << c << " ";
+template <typename T>
+std::ostream& operator<<(std::ostream& _os, const subvector<T>& _data){
+    for(const T& item : _data){
+        _os << item << " ";
     }
-    return os;
-}
-int main() {
-    subvector v = {1, 2, 3};
-    v.resize(2);
+    return _os;
 }
