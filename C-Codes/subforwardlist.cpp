@@ -1,149 +1,194 @@
-#pragma once
 #include <iostream>
-template <typename T>  
-class subforwardlist{
-private:
-    struct subforward_node{ 
-        T data;
-        subforward_node* next;
-        subforward_node* prev;
-        subforward_node(const T& val) : data(val), next(nullptr), prev(nullptr) {}
-    };
-    subforward_node* head;
-    subforward_node* tail;
-    size_t size;
-
+template <typename T>
+struct node{
+    node<T>* next_;
+    node<T>* prev_;
+    T data_;
+    node(const T& _data) : next_(nullptr), prev_(nullptr), data_(_data){}
+};
+template <typename T>
+class list{
+    node<T>* head_;
+    node<T>* tail_;
+    std::size_t size_;
 public:
-    subforwardlist() : head(nullptr), tail(nullptr), size(0) {}
-    ~subforwardlist() {
-        while (head) {
-            subforward_node* temp = head;
-            head = head->next;
-            delete temp;
+    list() : head_(nullptr), tail_(nullptr), size_(0){}
+    ~list(){
+        while(head_){
+            node<T>* current_ = head_;
+            head_ = head_->next_;
+            delete current_;
         }
     }
-    //Конструктор копирования для двусвязного списка
-    subforwardlist(const subforwardlist& other) : head(nullptr), tail(nullptr), size(0) {
-        subforward_node* current = other.head;
-        while (current) {
-            subforward_push_back(current->data);
-            current = current->next;
+    list(const list& _o) : head_(nullptr), tail_(nullptr), size_(_o.size_){
+        node<T>* node = _o.head_;
+        while(node){
+            push_back(node->data_);
+            node = node->next_;
         }
     }
-    //Оператор присваивания двусвязного списка
-    subforwardlist& operator=(subforwardlist other) {
-        swap(other);
+    list(list&& _o) noexcept : head_(_o.head_), tail_(_o.tail_), size_(_o.size_){
+        _o.head_ = _o.tail_ = nullptr;
+        _o.size_ = 0;
+    }
+    list& operator=(const list& _o){
+        if(this != &_o){
+            while (head_) {
+                node<T>* current_ = head_;
+                head_ = head_->next_;
+                delete current_;
+            }
+            tail_ = nullptr;
+            size_ = 0;
+            node<T>* node = _o.head_;
+            while(node){
+                push_back(node->data_);
+                node = node->next_;
+            }
+            size_ = _o.size_;
+        }
         return *this;
     }
-    //Обмен содержимым двух списков
-    void swap(subforwardlist& other) noexcept{
-        std::swap(head, other.head);
-        std::swap(tail, other.tail);
-        std::swap(size, other.size);
+    list& operator=(list&& _o) noexcept {
+        if(this != &_o){
+            while(head_){
+                node<T>* current_ = head_;
+                head_ = head_->next_;
+                delete current_;
+            }
+            head_ = _o.head_;
+            tail_ = _o.tail_;
+            size_ = _o.size_;
+            _o.head_ = _o.tail_ = nullptr;
+            _o.size_ = 0;
+        }
+        return *this;
     }
-
-    //Добавление элемента в конец двусвязного списка
-    void subforward_push_back(const T& value){
-        subforward_node* newNode = new subforward_node(value);
-        if (!tail) {
-            head = tail = newNode;
+    node<T>* begin(){return head_;}
+    node<T>* end() {return nullptr;}
+    const node<T>* begin() const {return head_;}
+    const node<T>* end() const {return nullptr;}
+    void push_back(const T& _a){
+        node<T>* sqr = new node<T>(_a);
+        if(!tail_){
+            head_ = tail_ = sqr;
+        } else{
+            tail_->next_ = sqr;
+            sqr->prev_ = tail_;
+            tail_ = sqr;
+        }
+        size_++;
+    }
+    void push_front(const T& _a){
+        node<T>* current_ = new node<T>(_a);
+        if(!head_){
+            head_ = tail_ = current_;
+        } else{
+            head_->prev_ = current_;
+            current_->next_ = head_;
+            head_ = current_;
+        }
+        size_++;
+    }
+    void pop_back(){
+        if(!tail_) {throw std::runtime_error("list is empty!");}
+        node<T>* current_ = tail_;
+        tail_ = tail_->prev_;
+        if(tail_){
+            tail_->next_ = nullptr;
         } else {
-            tail->next = newNode;
-            newNode->prev = tail;
-            tail = newNode;
+            head_ = nullptr;
         }
-        size++;
+        delete current_;
+        size_--;
     }
-    //Удаление элемента с конца двусвязного списка
-    bool subforward_pop_back() {
-        if (!tail) return false;
-        subforward_node* temp = tail;
-        tail = tail->prev;
-        if (tail) {
-            tail->next = nullptr;
-        } else {
-            head = nullptr;
+    void pop_front(){
+        if(!head_){throw std::runtime_error("list is empty");}
+        node<T>* current_ = head_;
+        head_ = head_->next_;
+        if(head_){
+            head_->prev_ = nullptr;
+        } else{
+            tail_ = nullptr;
         }
-        delete temp;
-        size--;
-        return true;
+        delete current_;
+        size_--;
     }
-    //Добавление элемента в начало двусвязного списка
-    void subforward_push_front(const T& value) {
-        subforward_node* newNode = new subforward_node(value);
-        if (!head) {
-            head = tail = newNode;
-        } else {
-            head->prev = newNode;
-            newNode->next = head;
-            head = newNode;
+    node<T>* at(std::size_t _index){
+        if(_index >= size_){throw std::invalid_argument("index is out of range");}
+        node<T>* current_ = head_;
+        for(std::size_t i = 0; i < _index; ++i){
+            current_ = current_->next_;
         }
-        size++;
+        return current_;
     }
-    //Удаление элемента из начала двусвчзного списка
-    bool subforward_pop_front() {
-        if (!head) return false;
-        subforward_node* temp = head;
-        head = head->next;
-        if (head) {
-            head->prev = nullptr;
-        } else {
-            tail = nullptr;
+    T& operator[](std::size_t _index){
+        if(_index > size_){throw std::invalid_argument("index is out of range");}
+        node<T>* current = head_;
+        for(std::size_t i = 0; i < _index; ++i){
+            current = current->next_;
         }
-        delete temp;
-        size--;
-        return true;
+        return current->data_;
     }
-    //Получение элемента двусвязного списка по его индексу
-    subforward_node* subforward_get(size_t index) const {
-        if (index >= size) return nullptr;
-        subforward_node* current = head;
-        for (size_t i = 0; i < index; ++i) {
-            current = current->next;
+    T operator[](std::size_t _index) const {
+        if(_index > size_){throw std::invalid_argument("index is out of range");}
+        const node<T>* current = head_;
+        for(std::size_t i = 0; i < _index; ++i){
+            current = current->next_;
         }
-        return current;
+        return current->data_;
     }
-    //Вставка элемента в любое место двусвязного списка
-    bool subforward_insert(size_t index, const T& value) {
-        if (index > size) return false;
-        if (index == 0) {
-            subforward_push_front(value);
-            return true;
+    const std::size_t size() const {return size_;}
+    void insert(std::size_t _index, const T& _a){
+        if(_index > size_){throw std::invalid_argument("index is out of range");}
+        if(_index == size_) {
+            push_back(_a);
+            return;
         }
-        if (index == size) {
-            subforward_push_back(value);
-            return true;
+        if(_index == 0) {
+            push_front(_a);
+            return;
         }
-        subforward_node* right = subforward_get(index);
-        subforward_node* left = right->prev;
-        subforward_node* newNode = new subforward_node(value);
-        newNode->prev = left;
-        newNode->next = right;
-        left->next = newNode;
-        right->prev = newNode;
-        size++;
-        return true;
+        node<T>* right = at(_index);
+        node<T>* left = right->prev_;
+        node<T>* current = new node<T>(_a);
+        current->prev_ = left;
+        current->next_ = right;
+        left->next_ = current;
+        right->prev_ = current;
+        size_++;
     }
-    //Удаление элемента из двусвязного списка по его индексу
-    bool subforward_erase(size_t index) {
-        if (index >= size) return false;
-        if (index == 0) {
-            return subforward_pop_front();
+    void erase(std::size_t _index){
+        if(size_ == 0){throw std::runtime_error("list is empty!");}
+        if(_index == size_){
+            pop_back();
+            return;
         }
-        if (index == size - 1) {
-            return subforward_pop_back();
+        if(_index == 0){
+            pop_front();
+            return;
         }
-        subforward_node* node = subforward_get(index);
-        subforward_node* left = node->prev;
-        subforward_node* right = node->next;
-        left->next = right;
-        right->prev = left;
-        delete node;
-        size--;
-        return true;
-    }
-    //Размер двусвязного списка
-    size_t subforward_get_size() const {
-        return size;
+        node<T>* current = at(_index);
+        node<T>* right = current->next_;
+        node<T>* left = current->prev_;
+        left->next_ = right;
+        right->prev_ = left;
+        delete current;
+        size_--;
     }
 };
+template <typename T>
+std::ostream& operator<<(std::ostream& _os, const list<T>& _data){
+    const node<T>* scr = _data.begin();
+    while(scr != _data.end()){
+        _os << scr->data_ << " ";
+        scr = scr->next_;
+    }
+    return _os;
+}
+int main(){
+    double f = 9;
+    list<double> h;
+    h.insert(0, 8.9);
+    std::cout << h;
+}
