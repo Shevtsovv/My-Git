@@ -3,37 +3,23 @@
 #include <vector>
 #include <fstream>
 const double theta = 1e-5;
-struct file{
-    std::ifstream file_;
-    std::string name_;
-    file(const std::string& _filename) : file_(_filename), name_(_filename){
-        if(!file_.is_open()){
-            throw std::invalid_argument("couldn't open file!" + _filename);
-        }
-    }
-    ~file(){
-        if(file_.is_open()){
-            file_.close();
-        }
-    }
-};
-struct metric{
-    double MSE_, MAE_, MAXE_;
-    metric(){}
-};
 class matrix{
     std::vector<std::vector<double>> matrix_;
     std::size_t m_, n_;
 public:
     matrix(const std::vector<std::vector<double>>& matrix) : matrix_(matrix){
-        if(matrix_.empty() || matrix_[0].empty()){throw std::invalid_argument("matrix is empty!");}
+        if(matrix_.empty() || matrix_[0].empty()){
+            throw std::invalid_argument("matrix is empty!");
+        }
         m_ = matrix_.size();
         n_ = matrix_[0].size();
         for(const std::vector<double>& row : matrix_){
-            if(row.size() != n_){throw std::invalid_argument("rows have different lendth");}
+            if(row.size() != n_){
+                throw std::invalid_argument("rows have different lendth");
+            }
         }
     }
-    const double operator()(std::size_t i, std::size_t j){return matrix_[i][j];}
+    const double operator()(std::size_t i, std::size_t j) const {return matrix_[i][j];}
     const std::vector<std::vector<double>>& data() const {return matrix_;}
     const std::size_t& rows() const {return m_;}
     const std::size_t& columns() const {return n_;}
@@ -91,7 +77,7 @@ public:
         }
         return ll;
     }
-    matrix operator*(double& lambda) const {
+    matrix operator*(double lambda) const {
         std::vector<std::vector<double>> c_ = matrix_;
         for(std::size_t i = 0 ; i < m_; ++i){
             for(std::size_t j = 0; j < n_; ++j){
@@ -234,13 +220,13 @@ public:
         }
         return sum;
     }
-    static matrix vandermonde(const std::vector<double>& _polynomial, std::size_t _polynomial_deg){
-        std::vector<std::vector<double>> van_(_polynomial.size(), std::vector<double>(_polynomial_deg + 1, 0));
-        for(std::size_t i = 0; i < _polynomial.size(); ++i){
+    static matrix vandermonde(const std::vector<double>& _x, std::size_t _deg){
+        std::vector<std::vector<double>> van_(_x.size(), std::vector<double>(_deg + 1, 0));
+        for(std::size_t i = 0; i < _x.size(); ++i){
             double xx = 1.0;
-            for(std::size_t j = 0; j < _polynomial_deg + 1; ++j){
+            for(std::size_t j = 0; j < _deg + 1; ++j){
                 van_[i][j] = xx;
-                xx *= _polynomial[i];
+                xx *= _x[i];
             }
         }
         return matrix(van_);
@@ -262,9 +248,13 @@ matrix polyfit(const std::vector<double>& _x_data, const std::vector<double>& _y
         throw std::invalid_argument("files don't contain same amount of data!");
     }
     matrix V = matrix::vandermonde(_x_data, _deg);
-    std::vector<std::vector<double>> y(1, std::vector<double>(_y_data.size(), 0));
-    for(std::size_t j = 0; j < _y_data.size(); ++j){
-        y[0][j] = _y_data[j];
+    // std::vector<std::vector<double>> y(1, std::vector<double>(_y_data.size(), 0));
+    // for(std::size_t j = 0; j < _y_data.size(); ++j){
+    //     y[0][j] = _y_data[j];
+    // }
+    std::vector<std::vector<double>> y;
+    for(double item : _y_data){
+        y.push_back({item});
     }
     matrix current = V.T() * V;
     if(current.rank() != current.rows()){
@@ -272,4 +262,23 @@ matrix polyfit(const std::vector<double>& _x_data, const std::vector<double>& _y
     }
     matrix c = current.inverse() * V.T() * matrix(y);
     return c;
+}
+matrix of_least_squares(const std::vector<double>& x, const std::vector<double>& y){
+    const std::size_t deg = 1;
+    return polyfit(x, y, deg);
+}
+matrix line_ls(const std::vector<double>& x, const std::vector<double>& y){
+    const std::size_t deg = static_cast<std::size_t>(1);
+    const std::size_t m = static_cast<std::size_t>(2);
+    matrix c = of_least_squares(x, y);
+    matrix X = matrix::vandermonde(x, deg);
+    matrix y_ = X * c;
+    double s = 0;
+    for(std::size_t i = 0; i < y.size(); ++i){
+        double r = y[i] - y_(i, 0);
+        s += r * r;
+    }
+    double sigma = s / (x.size() - m);
+    matrix Cov = (X.T() * X).inverse() * sigma;
+    return Cov;
 }
