@@ -1,265 +1,307 @@
 #include <iostream>
 #include <vector>
+#include <concepts>
+#include <limits>
 #include <cmath>
+#include <SFML/Graphics.hpp>
+template <typename T>
+concept numeric = std::integral<T> || std::floating_point<T>;
+template <numeric T>
 class polynomial{
-    std::vector<double> c_;
+    std::vector<T> c_;
 public:
-    polynomial(){}
-    polynomial(const std::vector<double>& __c) : c_(__c){}
-    polynomial(const std::initializer_list<double> _list){
-        for(const double& item : _list){
+    polynomial(const std::vector<T>& c) : c_(c){}
+    polynomial(const std::initializer_list<T>& list){
+        for(const T& item : list){
             c_.push_back(item);
         }
     }
-    const std::vector<double>& data() const {return c_;}
-    double operator[](std::size_t _index) const {return c_[_index];}
-    double& operator[](std::size_t _index) {return c_[_index];}
-    polynomial operator+(const polynomial& _o) const {
-        std::vector<double> res = c_;
-        if(c_.size() > _o.c_.size()){
-            for(std::size_t i = 0; i < _o.c_.size(); ++i){
-                res[i] += _o.c_[i];
+    T& operator[](std::size_t index) {
+        return c_[index];
+    }
+    const T operator[](std::size_t index) const {
+        return c_[index];
+    }
+    const std::vector<T>& data() const {return c_;}
+    polynomial operator+(const polynomial& o) const {
+        std::vector<T> l = (c_.size() > o.c_.size()) ? c_ : o.c_;
+        if(c_.size() > o.c_.size()){
+            for(std::size_t i = 0; i < o.c_.size(); ++i){
+                l[i] += o.c_[i];
             }
-        } else{
-            res.resize(_o.c_.size());
+        } else {
             for(std::size_t i = 0; i < c_.size(); ++i){
-                res[i] += _o.c_[i];
-            }
-            for(std::size_t i = c_.size(); i < _o.c_.size(); ++i){
-                res[i] = _o.c_[i];
+                l[i] += c_[i];
             }
         }
-        return res;
+        return l;
     }
-    polynomial operator-(const polynomial& _o) const {
-        std::vector<double> res = c_;
-        if(c_.size() > _o.c_.size()){
-            for(std::size_t i = 0; i < _o.c_.size(); ++i){
-                res[i] -= _o.c_[i];
+    polynomial operator-(const polynomial& o) const {
+        std::vector<T> l = (c_.size() > o.c_.size()) ? c_ : o.c_;
+        if(c_.size() > o.c_.size()){
+            for(std::size_t i = 0; i < o.c_.size(); ++i){
+                l[i] -= o.c_[i];
             }
-        } else{
-            res.resize(_o.c_.size());
+        } else {
+            for(std::size_t i = 0; i < l.size(); ++i){
+                l[i] *= static_cast<T>(-1);
+            }
             for(std::size_t i = 0; i < c_.size(); ++i){
-                res[i] -= _o.c_[i];
-            }
-            for(std::size_t i = c_.size(); i < _o.c_.size(); ++i){
-                res[i] = -_o.c_[i];
+                l[i] += c_[i];
             }
         }
-        return res;
+        return l;
     }
-    polynomial operator*(const polynomial& _o) const {
-        std::size_t size = c_.size() + _o.c_.size() - 1;
-        std::vector<double> res(size, 0);
+    polynomial operator*(const polynomial& o) const {
+        std::size_t size = c_.size() + o.c_.size() - std::size_t(1);
+        std::vector<T> l(size, 0);
         for(std::size_t i = 0; i < c_.size(); ++i){
-            for(std::size_t j = 0; j < _o.c_.size(); ++j){
-                res[i + j] += c_[i] * _o.c_[j];
+            for(std::size_t j = 0; j < o.c_.size(); ++j){
+                l[i + j] += c_[i] * o.c_[j];
             }
         }
-        return res;
+        return l;
     }
-    polynomial operator*(double _m) const {
-        std::vector<double> res = c_;
-        for(std::size_t i = 0; i < res.size(); ++i){
-            res[i] *= _m;
+    polynomial operator*(const T& a) const {
+        std::vector<T> m = c_;
+        for(std::size_t i = 0; i < m.size(); ++i){
+            m[i] *= a;
         }
-        return res;
+        return m;
     }
-    polynomial operator/(double _m) const {
-        std::vector<double> res = c_;
-        if(_m == 0) {throw std::invalid_argument("divide by zero");}
-        for(std::size_t i = 0; i < res.size(); ++i){
-            res[i] /= _m;
+    polynomial operator/(const T& a) const {
+        if(a == static_cast<T>(0)){
+            throw std::invalid_argument("Divide by zero!");
         }
-        return res;
+        std::vector<T> l = c_;
+        for(std::size_t i = 0; i < l.size(); ++i){
+            l[i] /= a;
+        }
+        return l;
     }
-    double operator()(double _m) const {
-        double xx = 1, res = 0;
+    T operator()(const T& a) const {
+        T res = static_cast<T>(0), xx = static_cast<T>(1);
         for(std::size_t i = 0; i < c_.size(); ++i){
-            res += c_[i] * xx;
-            xx *= _m;
+            res += xx * c_[i];
+            xx *= a;
         }
         return res;
     }
-    polynomial operator()(const polynomial& _round) const {
-        polynomial res = {0}, xx = {1};
+    polynomial operator()(const polynomial& data) const {
+        polynomial res = {0}, xx = polynomial({1});
         for(std::size_t i = 0; i < c_.size(); ++i){
             res = res + xx * c_[i];
-            xx = xx * _round;
+            xx = xx * data;
         }
         return res;
     }
-    const std::size_t degree() const {
-        if(c_.empty()){return 0;}
-        return c_.size() - 1;
-    }
-    const std::size_t size() const {return c_.size();}
 };
-std::ostream& operator<<(std::ostream& _os, const polynomial& _d){
-    std::vector<double> f = _d.data();
-    if(f.empty()){
-        throw std::invalid_argument("polynomial is empty!");
+template <numeric T>
+std::ostream& operator<<(std::ostream& os, const polynomial<T>& f){
+    std::vector<T> poly = f.data();
+    for(const T& item : poly){
+        os << item << " ";
     }
-    for(const double& item : f){
-        _os << item << " ";
-    }
-    return _os;
+    return os;
 }
-polynomial sin(const polynomial& _data, unsigned int r = 5){
-    polynomial sin_({0});
-    polynomial cf = _data;
-    const polynomial sqr = _data * _data;
-    double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        double p = (i % 2 != 0) ? 1 : -1;
-        sin_ = sin_ + cf * (p / fact);
-        cf = cf * sqr;
+template <numeric T>
+const T R(const polynomial<T>& data){
+    if(data.data().size() < std::size_t(2)){
+        throw std::invalid_argument("Impossible to fint radius of convergence!");
+    }
+    T max_r = static_cast<T>(0);
+    for(std::size_t i = 0; i < data.data().size() - std::size_t(1); ++i){
+        if(data[i] == static_cast<T>(0)){continue;}
+        T l = std::abs((data[i + 1]) / data[i]);
+        if(max_r < l){
+            max_r = l;
+        }
+    }
+    return (max_r == 0) ? std::numeric_limits<T>::infinity() : (double(1) / (max_r));
+}
+template <numeric T>
+polynomial<T> sin(const polynomial<T>& data, const std::size_t order){
+    polynomial<T> sin({0});
+    polynomial<T> cf = data;
+    const polynomial<T> xx = data * data;
+    double fact = double(1);
+    for (std::size_t i = 1; i <= order; ++i){
+        double p = (i % 2 != 0) ? double(1) : double(-1);
+        sin = sin + cf * (p / fact);
+        cf = cf * xx;
         fact *= (2 * i) * (2 * i + 1);
     }
-    return {sin_};
+    return sin;
 }
-polynomial cos(const polynomial& _data, unsigned int r = 5){
-    polynomial cos_({1});
-    polynomial cf = polynomial({1});
-    const polynomial sqr = _data * _data;
-    double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        double p = (i % 2 == 0) ? 1 : -1;
-        cf = cf * sqr;
+template <numeric T>
+polynomial<T> cos(const polynomial<T>& data, const std::size_t order){
+    polynomial<T> cos({1});
+    polynomial<T> cf = polynomial<T>({1});
+    const polynomial<T> xx = data * data;
+    double fact = double(1);
+    for (std::size_t i = 1; i <= order; ++i){
+        double p = (i % 2 == 0) ? double(1) : double(-1);
+        cf = cf * xx;
         fact *= (2 * i - 1) * (2 * i);
-        cos_ = cos_ + cf * (p / fact);
+        cos = cos + cf * (p / fact);
     }
-    return {cos_};
+    return cos;
 }
-polynomial sh(const polynomial& _data, unsigned int r = 5){
-    polynomial sin_({0});
-    polynomial cf = _data;
-    const polynomial sqr = _data * _data;
-    double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        sin_ = sin_ + cf * (1 / fact);
-        cf = cf * sqr;
+template <numeric T>
+polynomial<T> sh(const polynomial<T>& data, const std::size_t order){
+    polynomial<T> sh({0});
+    polynomial<T> cf = data;
+    const polynomial<T> xx = data * data;
+    double fact = double(1);
+    for (std::size_t i = 1; i <= order; ++i){
+        sh = sh + cf * (1 / fact);
+        cf = cf * xx;
         fact *= (2 * i) * (2 * i + 1);
     }
-    return {sin_};
+    return sh;
 }
-polynomial ch(const polynomial& _data, unsigned int r = 5){
-    polynomial ch_({1});
-    polynomial cf = polynomial({1});
-    const polynomial sqr = _data * _data;
-    double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        cf = cf * sqr;
+template <numeric T>
+polynomial<T> ch(const polynomial<T>& data, const std::size_t order){
+    polynomial<T> ch({1});
+    polynomial<T> cf = polynomial<T>({1});
+    const polynomial<T> xx = data * data;
+    double fact = double(1);
+    for (std::size_t i = 1; i <= order; ++i){
+        cf = cf * xx;
         fact *= (2 * i - 1) * (2 * i);
-        ch_ = ch_ + cf * (1 / fact);
+        ch = ch + cf * (1 / fact);
     }
-    return {ch_};
+    return ch;
 }
-polynomial exp(const polynomial& _data, unsigned int r = 5){
-    polynomial exp_({1});
-    polynomial cf = polynomial({1});
-    const polynomial sqr = _data;
+template <numeric T>
+polynomial<T> exponent(const polynomial<T>& data, const std::size_t order){
+    polynomial<T> exp({1});
+    polynomial<T> cf = polynomial<T>({1});
+    const polynomial<T> xx = data;
     double fact = 1;
-    for (unsigned int i = 1; i <= r; ++i){
-        cf = cf * sqr;
+    for (std::size_t i = 1; i <= order; ++i){
+        cf = cf * xx;
         fact *= (i);
-        exp_ = exp_ + cf * (1 / fact);
+        exp = exp + cf * (1 / fact);
     }
-    return {exp_};
+    return exp;
 }
-polynomial ln(const polynomial& _data, unsigned int r = 5){
-    polynomial cf = _data;
-    polynomial ln_({0});
+template <numeric T>
+polynomial<T> ln(const polynomial<T>& data, const std::size_t order){
+    polynomial<T> cf = data;
+    polynomial<T> ln({0});
     if (cf[0] == 0){
         throw std::invalid_argument("not taylor polynomial");
     } else {
-        polynomial tmp = (cf / cf[0]) - polynomial({1});
-        const polynomial sqr = tmp;
-        for (unsigned int l = 1; l <= r; ++l){
+        polynomial<T> tmp = (cf / cf[0]) - polynomial<T>({1});
+        const polynomial<T> sqr = tmp;
+        for (std::size_t l = 1; l <= order; ++l){
             double s = (l % 2 == 0) ? -1 : 1;
-            ln_ = ln_ + tmp * (s / l);
+            ln = ln + tmp * (s / l);
             tmp = tmp * sqr;
         }
         double ucr = std::log(cf[0]);
-        return {ln_ + polynomial({ucr})};
+        return ln + polynomial({ucr});
     }
 }
-polynomial binomial(const polynomial& _data, double alpha, unsigned int r = 5){
-    polynomial cf = _data;
-    polynomial b_({1});
+template <numeric T>
+polynomial<T> binomial(const polynomial<T>& data, double alpha, const std::size_t order){
+    polynomial<T> cf = data;
+    polynomial<T> b({1});
     if (cf[0] == 0){
         throw std::invalid_argument("not taylor polynomial");
     } else {
-        polynomial tmp = (cf / cf[0]) - polynomial({1});
-        const polynomial sqr = tmp;
-        double fact = 1;
-        double u = 1;
-        for (unsigned int k = 1; k <= r; ++k){
+        polynomial<T> tmp = (cf / cf[0]) - polynomial({1});
+        const polynomial<T> xx = tmp;
+        double fact = double(1), u = double(1);
+        for (std::size_t k = 1; k <= order; ++k){
             u *= alpha - k + 1;
             fact *= k;
-            b_ = b_ + tmp * (u / fact);
-            tmp = tmp * sqr;
+            b = b + tmp * (u / fact);
+            tmp = tmp * xx;
         }
         double ucr = std::pow(cf[0], alpha);
-        return {b_ * ucr};
+        return b * ucr;
     }
 }
-polynomial frac(const polynomial& _data, unsigned int r = 5){
-    polynomial cf = _data;
-    polynomial fr_({1});
-    if (cf[0] == 0){
-        throw std::invalid_argument("is not taylor");
-    } else {
-        polynomial tmp = (cf / cf[0]) - polynomial({1});
-        const polynomial sqr = tmp;
-        for (unsigned int i = 0; i <= r; ++i){
-            double a = (i % 2 == 0) ? -1 : 1;
-            fr_ = fr_ + tmp * a;
-            tmp = tmp * sqr;
+template <numeric T>
+polynomial<T> tan(const polynomial<T>& data, const std::size_t order){
+    auto lambda = [](const polynomial<T>& data, const std::size_t r)->polynomial<T>{
+        polynomial<T> cf = data;
+        polynomial<T> fr({1});
+        if (cf[0] == 0){
+            throw std::invalid_argument("is not taylor");
+        } else {
+            polynomial<T> tmp = (cf / cf[0]) - polynomial<T>({1});
+            const polynomial<T> xx = tmp;
+            for (std::size_t i = 0; i <= r; ++i){
+                double a = (i % 2 == 0) ? double(1) : double(-1);
+                fr = fr + tmp * a;
+                tmp = tmp * xx;
+            }
+            double c = double(1) / cf[0];
+            return fr * c;
         }
-        double ucr = 1.0 / cf[0];
-        return {fr_ * ucr};
+    };
+    polynomial<T> tan = sin(data, order) * lambda(cos(data, order));
+    return tan;
+}
+template <numeric T>
+polynomial<T> tanh(const polynomial<T>& data, const std::size_t order){
+    auto lambda = [](const polynomial<T>& data, const std::size_t r)->polynomial<T>{
+        polynomial<T> cf = data;
+        polynomial<T> fr({1});
+        if (cf[0] == 0){
+            throw std::invalid_argument("is not taylor");
+        } else {
+            polynomial<T> tmp = (cf / cf[0]) - polynomial<T>({1});
+            const polynomial<T> xx = tmp;
+            for (std::size_t i = 0; i <= r; ++i){
+                double a = (i % 2 == 0) ? double(1) : double(-1);
+                fr = fr + tmp * a;
+                tmp = tmp * xx;
+            }
+            double c = double(1) / cf[0];
+            return fr * c;
+        }
+    };
+    polynomial<T> th = sh(data, order) * lambda(ch(data, order));
+    return th;
+}
+template <numeric T>
+polynomial<T> arctan(const polynomial<T>& data, const std::size_t order){
+    polynomial<T> cf = data;
+    polynomial<T> arctan({0});
+    const polynomial<T> xx = data * data;
+    for (std::size_t i = 0; i < order; ++i){
+        double p = (i % 2 == 0) ? double(1) : double(-1);
+        arctan = arctan + cf * (p / (2 * i + 1));
+        cf = cf * xx;
     }
+    return arctan;
 }
-polynomial tan(const polynomial& _data){
-    polynomial tan_ = sin(_data) * frac(cos(_data));
-    return {tan_};
-}
-polynomial tanh(const polynomial& _data){
-    polynomial th_ = sh(_data) * frac(ch(_data));
-    return {th_};
-}
-polynomial arctan(const polynomial& _data, unsigned int r = 5){
-    polynomial cf = _data;
-    polynomial arctan_({0});
-    const polynomial sqr = _data * _data;
-    for (unsigned int i = 0; i < r; ++i){
-        double p = (i % 2 == 0) ? 1 : -1;
-        arctan_ = arctan_ + cf * (p / (2 * i + 1));
-        cf = cf * sqr;
-    }
-    return {arctan_};
-}
-polynomial arcsin(const polynomial& _data, unsigned int r = 5){
-    polynomial cf = _data;
-    const polynomial sqr = _data * _data;
-    polynomial arcsin_({0});
-    for (unsigned int i = 0; i <= r; ++i) {
+template <numeric T>
+polynomial<T> arcsin(const polynomial<T>& data, const std::size_t order){
+    polynomial<T> cf = data;
+    const polynomial<T> xx = data * data;
+    polynomial<T> arcsin({0});
+    for (std::size_t i = 0; i <= order; ++i) {
         double a = 1;
         double b = 1;
-        for (unsigned int l = 1; l < 2 * i + 1; l += 2){
+        for (std::size_t l = 1; l < 2 * i + 1; l += 2){
             a *= l;
         }
-        for (unsigned int h = 2; h < 2 * i + 2; h += 2){
+        for (std::size_t h = 2; h < 2 * i + 2; h += 2){
             b *= h;
         }
-        arcsin_ = arcsin_ + cf * (a /(b * (2 * i + 1)));
-        cf = cf * sqr;
+        arcsin = arcsin + cf * (a /(b * (2 * i + 1)));
+        cf = cf * xx;
     }
-    return {arcsin_};
+    return arcsin;
 }
-polynomial arccos(const polynomial& _data, unsigned int r = 5){
+template <numeric T>
+polynomial<T> arccos(const polynomial<T>& data, const std::size_t order){
     const double pi = 3.1415926;
-    polynomial arccos_ = polynomial({pi / 2}) - arcsin(_data);
-    return {arccos_};
+    polynomial<T> arccos = polynomial<T>({pi / 2}) - arcsin(data, order);
+    return arccos;
 }
