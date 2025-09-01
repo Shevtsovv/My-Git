@@ -4,13 +4,11 @@
 #include <memory>
 #include <cmath>
 struct Screen{
-    static constexpr unsigned int Width = 1200;
-    static constexpr unsigned int Height = 600;
+    static constexpr unsigned int Width = 1400;
+    static constexpr unsigned int Height = 700;
 };
 struct Flag{
     static constexpr unsigned int Solid = 1;
-    static constexpr unsigned int Dashed = 2;
-    static constexpr unsigned int Dotted = 3;
 };
 class Color{
     uint8_t alpha_;
@@ -42,32 +40,33 @@ public:
     sf::RenderTexture& Profile(){return texture_;}
     ~RenderProfile() = default;
 };
+struct Cashed{
+    static inline std::vector<std::vector<double>> data1_, data2_;
+    static inline std::vector<Color> color_;
+    static constexpr int space = 100;
+};
 template <typename T>
 concept alg = std::is_integral_v<T> || std::is_floating_point_v<T>;
-struct Cashed{
-    static inline std::vector<std::vector<double>> data1_;
-    static inline std::vector<std::vector<double>> data2_;
-    static inline std::vector<unsigned int> linestyle_;
-    static inline std::vector<Color> color_;
-};
 template <alg T> class Graph{
     std::unique_ptr<RenderProfile> profile_;
     Color fone_, grid_, axes_;
     bool Grid() const {
-        const int space = 90;
+        const int& space = Cashed::space;
         const unsigned int& a = profile_->Data().x;
         const unsigned int& b = profile_->Data().y;
+        sf::RenderTexture& texture = profile_->Profile();
         for(int v = space; v <= a - space; v += (a - 2 * space)/ 10){
             sf::Vertex vl[] = {sf::Vertex(sf::Vector2f(v, space), grid_.Data()), sf::Vertex(sf::Vector2f(v, (b - space)), grid_.Data())};
-            profile_->Profile().draw(vl, 2, sf::LineStrip);
+            texture.draw(vl, 2, sf::LineStrip);
         }
         for(int h = space; h <= b - space; h += (b - 2 * space)/ 10){
             sf::Vertex hl[] = {sf::Vertex(sf::Vector2f(space, h), grid_.Data()), sf::Vertex(sf::Vector2f(a - space, h), grid_.Data())};
-            profile_->Profile().draw(hl, 2, sf::LineStrip);
+            texture.draw(hl, 2, sf::LineStrip);
         }
         return true;
     }
     bool Solid(const std::vector<sf::Vertex>& c, const Color& color) const {
+        sf::RenderTexture& texture = profile_->Profile();
         const float space = 0.5f;
         const float R = 1.4f;
         for(std::size_t i = 1; i < c.size(); ++i){
@@ -81,53 +80,59 @@ template <alg T> class Graph{
                 sf::CircleShape dot(R);
                 dot.setPosition(dx);
                 dot.setFillColor(color.Data());
-                profile_->Profile().draw(dot);
+                texture.draw(dot);
             }
         }
         return true;
     }
     bool Plot() const {
-        constexpr int space = 90;
-        constexpr double r = space / 3;
-        std::vector<std::vector<T>>& x = Cashed::data1_;
-        std::vector<std::vector<T>>& y = Cashed::data2_;
-        const unsigned int& a = profile_->Data().x;
-        const unsigned int& b = profile_->Data().y;
-        const unsigned int& solid = Flag::Solid;
+        sf::RenderTexture& texture = profile_->Profile();
+        const int& space = Cashed::space;
+        const double r = space / 5;
+        std::vector<std::vector<T>>& x = Cashed::data1_, y = Cashed::data2_;
         std::vector<Color>& color = Cashed::color_;
-        std::vector<unsigned int>& linestyle = Cashed::linestyle_;
-        std::vector<std::pair<std::vector<double>::const_iterator, std::vector<double>::const_iterator>> it_x;
-        std::vector<std::pair<std::vector<double>::const_iterator, std::vector<double>::const_iterator>> it_y;
-        profile_->Profile().clear(fone_.Data());
+        const unsigned int& a = profile_->Data().x,
+                            b = profile_->Data().y;
+        T global_min_x = std::numeric_limits<T>::max(),
+                global_max_x = std::numeric_limits<T>::lowest();
+        T global_min_y = std::numeric_limits<T>::max(),
+                global_max_y = std::numeric_limits<T>::lowest();
         for(std::size_t i = 0; i < x.size(); ++i){
-            it_x.push_back(std::minmax_element(x[i].begin(), x[i].end()));
-            it_y.push_back(std::minmax_element(y[i].begin(), y[i].end()));
-            double u = *it_x[i].second - *it_x[i].first;
-            double v = *it_y[i].second - *it_y[i].first;
-            if(u == 0 || v == 0){
-                u = 1;
-                v = 1;
+            for(const auto& val : x[i]){
+                global_min_x = std::min(global_min_x, val);
+                global_max_x = std::max(global_max_x, val);
             }
+            for(const auto& val : y[i]){
+                global_min_y = std::min(global_min_y, val);
+                global_max_y = std::max(global_max_y, val);
+            }
+        }
+        double u = global_max_x - global_min_x;
+        double v = global_max_y - global_min_y;
+        if(u == 0) u = 1;
+        if(v == 0) v = 1;
+        texture.clear(fone_.Data());
+        for(std::size_t i = 0; i < x.size(); ++i){
             std::vector<sf::Vertex> c;
             for(std::size_t l = 0; l < x[i].size(); ++l){
-                float scr_x = (space + r) + ((x[i][l] - *it_x[i].first) / (u)) * (a - 2 * (space + r));
-                float scr_y = (space + r) + (b - 2 * (space + r)) * (1 - ((y[i][l] - *it_y[i].first) / (v)));
+                float scr_x = (space + r) + ((x[i][l] - global_min_x) / u) * (a - 2 * (space + r));
+                float scr_y = (space + r) + (b - 2 * (space + r)) * (1 - ((y[i][l] - global_min_y) / v));
                 c.emplace_back(sf::Vector2f(scr_x, scr_y), color[i].Data());
             }
             Solid(c, color[i]);
         }
         Grid();
-        profile_->Profile().display();
+        texture.display();
         return true;
     }
 public:
     Graph() : profile_(std::make_unique<RenderProfile>(Screen::Width, Screen::Height, sf::String("As Chartify!"))), fone_(Color::White()), grid_(Color({Color({180, 180, 180}, 200)})), axes_(Color::Black()){}
-    bool ConfigurePlot(const std::vector<std::vector<double>>& data1, const std::vector<std::vector<double>>& data2, const std::vector<Color>& color, const std::vector<unsigned int>& linestyle){
-        if(data1.size() != data2.size() || data1.size() != color.size() || data1.size() != linestyle.size() || data1.empty() || data2.empty()){
-            throw std::invalid_argument("error 1");
-        }
+    bool ConfigurePlot(const std::vector<std::vector<double>>& data1, const std::vector<std::vector<double>>& data2, const std::vector<Color>& color){
         Cashed::data1_.clear();
         Cashed::data2_.clear();
+        if(data1.size() != data2.size() || data1.size() != color.size() || data1.empty() || data2.empty()){
+            throw std::invalid_argument("error 1");
+        }
         for(std::size_t i = 0; i < data1.size(); ++i){
             if(data1[i].size() != data2[i].size() || data1[i].size() <= 2 || data2[i].size() <= 2){
                 throw std::invalid_argument("error 2");
@@ -136,12 +141,12 @@ public:
             Cashed::data2_.push_back(data2[i]);
         }
         Cashed::color_ = color;
-        Cashed::linestyle_ = linestyle;
         return true;
     }
     bool Savefig(const std::string& filename) const {
+        sf::RenderTexture& texture = profile_->Profile();
         Plot();
-        return profile_->Profile().getTexture().copyToImage().saveToFile(filename);
+        return texture.getTexture().copyToImage().saveToFile(filename);
     }
     ~Graph() = default;
 };
