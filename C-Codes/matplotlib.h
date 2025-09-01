@@ -7,9 +7,6 @@ struct Screen{
     static constexpr unsigned int Width = 1400;
     static constexpr unsigned int Height = 700;
 };
-struct Flag{
-    static constexpr unsigned int Solid = 1;
-};
 class Color{
     uint8_t alpha_;
     sf::Color color_;
@@ -45,11 +42,34 @@ struct Cashed{
     static inline std::vector<Color> color_;
     static constexpr int space = 100;
 };
+struct Title{
+    static inline sf::Font font_;
+    static inline sf::Text title_;
+    static inline sf::String ttl_;
+    static constexpr int fontsize_ = 18;
+    static inline bool TITLE_ENABLED_ = false;
+};
 template <typename T>
 concept alg = std::is_integral_v<T> || std::is_floating_point_v<T>;
 template <alg T> class Graph{
     std::unique_ptr<RenderProfile> profile_;
     Color fone_, grid_, axes_;
+    const float dot_radius = 1.4f;
+    bool Text(sf::Text& text, sf::Font& font, const sf::String& str, const unsigned int& fontsize, const T& x, const T& y) const {
+        const std::string root = "../h/font/font.ttf";
+        sf::RenderTexture& texture = profile_->Profile();
+        const sf::Color& black = Color::Black().Data();
+        if(!font.loadFromFile(root)){
+            throw std::invalid_argument("error 0");
+        }
+        text.setFont(font);
+        text.setFillColor(black);
+        text.setCharacterSize(fontsize);
+        text.setPosition(x, y);
+        text.setString(str);
+        texture.draw(text);
+        return true;
+    }
     bool Grid() const {
         const int& space = Cashed::space;
         const unsigned int& a = profile_->Data().x;
@@ -68,7 +88,7 @@ template <alg T> class Graph{
     bool Solid(const std::vector<sf::Vertex>& c, const Color& color) const {
         sf::RenderTexture& texture = profile_->Profile();
         const float space = 0.5f;
-        const float R = 1.4f;
+        const float& R = dot_radius;
         for(std::size_t i = 1; i < c.size(); ++i){
             const sf::Vector2f& iu = c[i - 1].position;
             const sf::Vector2f& iv = c[i].position;
@@ -91,8 +111,7 @@ template <alg T> class Graph{
         const double r = space / 5;
         std::vector<std::vector<T>>& x = Cashed::data1_, y = Cashed::data2_;
         std::vector<Color>& color = Cashed::color_;
-        const unsigned int& a = profile_->Data().x,
-                            b = profile_->Data().y;
+        const unsigned int& a = profile_->Data().x, b = profile_->Data().y;
         T global_min_x = std::numeric_limits<T>::max(),
                 global_max_x = std::numeric_limits<T>::lowest();
         T global_min_y = std::numeric_limits<T>::max(),
@@ -122,6 +141,9 @@ template <alg T> class Graph{
             Solid(c, color[i]);
         }
         Grid();
+        const bool& TITLE_EN = Title::TITLE_ENABLED_;
+        const sf::String& ttl = Title::ttl_;
+        if(TITLE_EN){Title(ttl);}
         texture.display();
         return true;
     }
@@ -141,6 +163,17 @@ public:
             Cashed::data2_.push_back(data2[i]);
         }
         Cashed::color_ = color;
+        return true;
+    }
+    bool Title(const sf::String& title) const {
+        sf::Text& text_ttl = Title::title_;
+        sf::Font& font_ttl = Title::font_;
+        const int& space = Cashed::space;
+        const float& str_len = text_ttl.getGlobalBounds().getSize().x;
+        const unsigned int& x = (profile_->Data().x - str_len) / 2, y = Cashed::space / 2, fsize = Title::fontsize_;
+        Text(text_ttl, font_ttl, title, fsize, x, y);
+        Title::ttl_ = title;
+        Title::TITLE_ENABLED_ = true;
         return true;
     }
     bool Savefig(const std::string& filename) const {
