@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1757870093.69175 "/home/amisto/Рабочий стол/My-Lab/3.1.3/main.tex" "main.pdf" "main" 1757870093.93917 0
+["pdflatex"] 1757889801.15281 "/home/amisto/Рабочий стол/My-Lab/3.1.3/main.tex" "main.pdf" "main" 1757889801.4561 0
   "/etc/texmf/web2c/texmf.cnf" 1757586304.7408 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1728.600pk" 1757586570.39763 45148 3e33e8fc205daf22b211c52da05c56af ""
   "/home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1200.600pk" 1757586564.42459 27004 0b4027b04c73bf00c39e2ae5b78d595b ""
@@ -7,11 +7,13 @@
   "/home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm2074.600pk" 1757586565.9816 50524 5fd33ee465f846c19879d7022817c3ca ""
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/labx1200.tfm" 1757586825.92513 3308 eee81981029f67083258db36df06e523 ""
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/labx1728.tfm" 1757586570.30329 3312 d199be9bd555944e2403193d58a0256a ""
+  "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm0600.tfm" 1757793448.98737 3248 7c0b9d76a2cd84ed06764a4c6eea5de4 ""
+  "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm0800.tfm" 1757793448.50269 3240 04766e423166ba63b7fbbf132b8618cb ""
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm1200.tfm" 1757586564.32881 3240 c2435f2b5cd66d4930bc29b8df87967e ""
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm1440.tfm" 1757586567.38219 3256 3daaa33cf35cf3f354983aa3214ecd7f ""
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm1728.tfm" 1757586568.8471 3252 92d08740ce00199d6cf9ff4aaada81d1 ""
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm2074.tfm" 1757586565.87471 3264 03c2b9e4787a40d3b9c197c38b93b558 ""
-  "/home/amisto/Рабочий стол/My-Lab/3.1.3/main.tex" 1757870093.51959 10096 8c468e6af1de21d542b3e6c7f2de37aa ""
+  "/home/amisto/Рабочий стол/My-Lab/3.1.3/main.tex" 1757889800.98794 14927 54222883bf23a22af43886ae35e30d73 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -97,11 +99,13 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1757586315.14389 167470 33f10313cc2bf91fb22ded8d87a7e0d7 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1757586327 6908713 7aa169418c48a9deb340d7d2e4b368c4 ""
-  "main.aux" 1757870093.89038 1695 4b926268af152dbb7f14f86793ae54c8 "pdflatex"
-  "main.tex" 1757870093.51959 10096 8c468e6af1de21d542b3e6c7f2de37aa ""
+  "main.aux" 1757889801.40735 2271 05e27a2d63513cb897bb199a3e2e060e "pdflatex"
+  "main.tex" 1757889800.98794 14927 54222883bf23a22af43886ae35e30d73 ""
   "p1.png" 1757867992.09389 12673 a5181e43bc398aafb337358a16412889 ""
   "p2.png" 1757868952.82061 21134 0f9b34fc2d85f61444b3eb91bc5e48f8 ""
   "p3.png" 1757869247.42342 5310 479e61a18b5631673ca7b248d4d7d9cd ""
+  "period.png" 1757882550.29341 36202 e9fa59e92f5f44f3344a1188311a03ef ""
+  "vertical.png" 1757887419.83028 32626 d47999e0ad42af7f129c309ba3fedaef ""
   (generated)
   "main.aux"
   "main.log"
