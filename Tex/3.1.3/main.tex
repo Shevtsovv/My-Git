@@ -1,4 +1,4 @@
-\documentclass[a4paper, 12pt]{article}
+\documentclass[a4paper, 10pt]{article}
 \usepackage[a4paper, top = 1.5cm, bottom = 1.5cm, left = 1cm, right = 1cm]{geometry}
 \usepackage{graphicx}
 \usepackage{subcaption}
@@ -44,12 +44,6 @@
     \end{figure}\\
 Две последние установки дают один результат для измерения магнитного момента. Можно скрутить магнитную стрелку в кольцо, и
 показать, что упругость нити при вычислении периода колебаний стрелки можно не учитывать.
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.3\linewidth]{p4.png}
-    \caption{магнитная стрелка, свернутая в кольцо}
-    \label{магнитная стрелка, свернутая в кольцо}
-\end{figure}
 \section*{Необходимые формулы и теория}
 \paragraph{}
 Простейший магнитный диполь может быть образован витком с током или постоянным магнитом.\\
@@ -151,12 +145,14 @@
             \hline
             Количество шариков $n$ & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12\\ \hline
             Время $t$, с & 10.67 & 14.18 & 16.00 & 23.41 & 26.78 & 28.34 & 34.50 & 42.34 & 50.03 & 53.50\\ \hline
+            $\Delta t$, с & \multicolumn{10}{|c|}{0.01}\\ \hline
             Число оборотов $N$ & \multicolumn{10}{|c|}{10}\\ \hline
             Период $t/N$, с & 1.067 & 1.418 & 1.600 & 2.341 & 2.678 & 2.834 & 3.450 & 4.234 & 5.003 & 5.350\\ \hline
+            $\Delta T$, с & \multicolumn{10}{|c|}{0.001}\\ \hline
         \end{tabular}
     \end{table}\\
     Коэффициент регрессии графика $T(n)$ равен $k = 0.451\pm 0.028$ (см. рисунок \ref{графики моментов и периодов}).
-    \item Скрутим магнитную стрелку в виде кольца (см. рисунок \ref{магнитная стрелка, свернутая в кольцо}), измерим модуль кручения нити:
+    \item Скрутим магнитную стрелку в виде кольца, измерим модуль кручения нити:
     \begin{equation*}
         f = \left(\frac{2\pi}{T}\right)^{2}\frac{12mR^{2}}{2} = \left(\frac{2\pi}{1.925}\right)^{2}\frac{3\cdot0.841\cdot 0.59^{2}}{2} \approx 1.433\times 10^{-7}\ \text{Единиц СИ}
     \end{equation*}
@@ -204,14 +200,14 @@
     \end{equation*}
     \begin{figure}[htbp]
         \centering
-        \begin{subfigure}{0.8\textwidth}
+        \begin{subfigure}{0.9\textwidth}
             \centering
             \includegraphics[width=\linewidth]{period.png}
             \caption{график крутильных колебаний стрелки}
             \label{горизонтальная составляющая}
         \end{subfigure}
         \hfill
-        \begin{subfigure}{0.8\textwidth}
+        \begin{subfigure}{0.9\textwidth}
             \centering
             \includegraphics[width=\linewidth]{vertical.png}
             \caption{зависимость момента силы тяжести от числа шариков}
@@ -233,3 +229,9 @@
         \item Лабораторные установки подходят для измерения составляющих магнитного поля.
     \end{enumerate}
 \end{document}
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.3\linewidth]{p4.png}
+%     \caption{магнитная стрелка, свернутая в кольцо}
+%     \label{магнитная стрелка, свернутая в кольцо}
+% \end{figure}
