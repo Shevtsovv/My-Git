@@ -76,6 +76,12 @@
     F_{12} = \mathfrak{m}_{1}{\frac{\partial {B_{2}}}{\partial r}} = \mathfrak{m}_{1}\frac{\partial (2\mathfrak{m}_{2}/r^{3})}{\partial r}  =-6\frac{\mathfrak{m}_{1}\mathfrak{m}_{2}}{r^{4}}
     \label{Сила взаимодействия диполей}
 \end{equation}
+Еще одной характеристикой магнитов является намагниченность, равная объёмной плотности магнитного момента:
+\begin{equation}
+    \mathbf{M} = \mathfrak{m}/V
+    \label{намагниченность}
+\end{equation}
+Вf\newline
 Для рассчета магнитного поля Земли есть несколько методов:
 \begin{enumerate}
     \item Определить магнитный момент $\mathfrak{m}$ двух из шариков, определив наибольшее расстояние $\mathit{r_{max}}$, на котором они смогут удерживать друг друга в поле тяжести. По величине $\mathfrak{m}$\
@@ -107,110 +113,110 @@
         \label{Период крутильных колебаний}
     \end{equation}
     По зависимости $T(n) = f(n)$, а это прямая, можно определить коэффициент наклона и по нему найти модуль горизонтальной составляющей поля.\\
-    Рассчитать вертикальную составляющую поля можно при помощи той же магнитной стрелки. При отклонении стрелки возникает момент силы натяжения нити. Поэтому, можно выровнять положение стрелки, подвесив на некоторое ее расстояние $x$ груз массой $m_{x}$. Отсюда получим выражение для вертикальной составляющей магнитного поля:
+    Вертикальная составляющая: из-за возникающего момента силы натяжения нити необходимо
+    выровнять положение стрелки, подвесив на некоторое ее расстояние $x$ груз массой $m_{x}$.Отсюда получим выражение для вертикальной составляющей магнитного поля:
     \begin{equation}
         m_{x}gx = n\mathfrak{m}B_{\perp} \iff B_{\perp} = \frac{m_{x}gx}{n\mathfrak{m}}
         \label{Вертикальная составляющая}
     \end{equation}
-    Теперь, зная составляющие магнитного поля, можно рассчитать магнитное поле Земли согласно (\ref{Векторная сумма полей}).
 \end{enumerate}
 \section*{Выполнение работы}
 \begin{enumerate}
-    \item Измерим массу шарика с помощью весов и его диаметр с помощью штангенциркуля.
-    \begin{table}[htbp]
-        \centering
-        \begin{tabular}{|c|c|}
+    \item Измерим массу одного шарика с помощью весов и его диаметр с помощью штангенциркуля (погрешности измерений массы и диаметра $\Delta m$, $\Delta d$), вычислим его объем:
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|}
             \hline
-            Масса шарика, г & Диаметр шарика, см\\ \hline
-            $0.841\pm 0.001$ & $0.59\pm 0.01$\\ \hline
+            Масса шарика, г & Диаметр шарика, cm & $\Delta m$, г & $\Delta d$, cm & V, $cm^{3}$ & $\Delta V$, $cm^{3}$\\
+            $0.841\pm 0.001$ & $0.59\pm 0.01$ & 0.001 & 0.01 & 0.022 & $2.23\cdot 10^{-3}$\\
+            \hline
         \end{tabular}
-    \end{table}
-    \item Рассчитаем величину магнитного момента магнитика с помощью установки (\ref{sub@магнитный момент установка}), максимальное
-    расстояние, при котором шарики перестают взаимодействовать, $r_{max} = 2.2$ см
+    \end{center}
     \begin{equation*}
-        \begin{aligned}
-            \mathfrak{m} = \sqrt{\frac{0.841\cdot 980\cdot 2.2^{4}}{6}} \approx 56.73\ \text{Единиц СГС}\\
-            \Delta \mathfrak{m} = \frac{\mathfrak{m}}{2}\cdot \left(\frac{\Delta m}{m} + \frac{8\Delta r_{max}}{r_{max}}\right) \approx 10.34\ \text{Единиц СГС}
-        \end{aligned}
+        V = \frac{1}{6}\pi D^{6} = 0.022\pm \ cm^{3} \quad \Delta V = \frac{6V\Delta D}{D} = 2.23\cdot 10^{-3} cm^{3}
     \end{equation*}
-    \item Рассчитаем величину намагниченности материала шариков и остаточную индукцию поля.
-    \begin{equation*}
-        \mathbf{M} = \frac{\mathfrak{m}}{V} = \frac{3\mathfrak{m}}{4\pi R^{3}} \approx 527.5\ \text{Единиц СГС}
-    \end{equation*}
-    \begin{equation*}
-        \mathbf{B_{r}} = 4\pi \mathbf{M} \approx 6628.7\ \text{Единиц СГС} = 662.87\ \text{мТл}
-    \end{equation*}
+    \item Измерим магнитное поле на полюсах шарика с момощью магнитрометра: $\mathbf{B_{p}}$ = $420\pm 1$ мТл. Магнитное поле неодимового магнита больше всего
+    на его полюсах, где ориентирован магнитный момент.
+    \item Рассчитаем величину магнитного момента одного шарика с помощью установки (\ref{sub@магнитный момент установка}). Максимальное
+    расстояние, при котором шарики перестают взаимодействовать равно $r_{max} = 2.20\pm 0.05$ см
+    \begin{align*}
+        \mathfrak{m} = \sqrt{\frac{0.841\cdot 980.67\cdot 2.20^{4}}{6}} = 56.74\pm 0.85\ \text{эрг/Гс} \quad
+        \Delta \mathfrak{m} = {\mathfrak{m}}\cdot \left(\frac{\Delta m}{2m} + \frac{2\Delta r_{max}}{r_{max}} + \frac{\Delta g}{2g}\right) = 0.85\ \text{эрг/Гс}
+    \end{align*}
+    \item Рассчитаем величину намагниченности $\mathbf{M}$ материала шариков и остаточную индукцию поля $\mathbf{B_{r}}$ по формуле (\ref{намагниченность}).
+    \begin{align*}
+        \mathbf{M} = \frac{\mathfrak{m}}{V} = \frac{3\mathfrak{m}}{4\pi R^{3}} = 527.64\pm 61.39\ \text{Гс} & \quad \Delta \mathbf{M} = \mathbf{M}\left(\frac{\Delta \mathfrak{m}}{\mathfrak{m}} + \frac{\Delta V}{V}\right) = 61.39\ \text{Гс}\\
+        \mathbf{B_{r}} = 4\pi\mathbf{M} = 6630.47\pm 771.44\ \text{Гс} & \quad \Delta \mathbf{B_{r}} = \frac{\mathbf{B_{r}}\Delta \mathbf{M}}{\mathbf{M}} = 771.44\ \text{Гс}
+    \end{align*}
+    \item Остаточная индукция и индукция на полюсах магнита связаны соотношением: $\mathbf{B_{p}} = \frac{2}{3}\mathbf{B_{r}}$.\\ 
+    Тогда $\mathbf{B_{r}} = 630\pm 1\ \text{мТл} = 6300\ \text{Гс}$, ошибка рассчитанного в предыдущем пункте значения индукции относительно измеренного магнитрометром: $\varepsilon \sim 10^{-2}$. Это говорит о том, что
+    поле на полюсах шарика было измерено верно (то есть там, где ориентирован магнитный момент) и предложенный магнитрометр в работе подходит для изучения магнитный свойств
+    неодимового магнита.
+    \item Скрутим магнитную стрелку в виде кольца, необходимо возбудить малые колебания колечки, период малых колебаний $T = 50\pm 1\ \text{с}$. Покажем, что при расчетах составляющих поля упругостью нити можно пренебречь:
+    \begin{align*}
+        f = \frac{(4\pi)^{2} I}{T^{2}} = \frac{16\pi^{2}}{2500}\cdot 6mR^{2} = 2.77\cdot 10^{-5}\ \text{Нм/рад} \quad \Delta f = f \left(\frac{\Delta m}{m} + \frac{\Delta D}{D} + \frac{2\Delta T}{T}\right) = 6.30\cdot 10^{-6}\ \text{Нм/рад}
+    \end{align*}
+    Поэтому жесткостью нити при колебаниях магнитной стрелки можно пренебречь.
     \item Исследуем зависимость периода крутильных колебаний от количества шариков, составляющих стрелку:
-    \begin{table}[htbp]
-        \centering
+    \begin{center}
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
             \hline
-            Количество шариков $n$ & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12\\ \hline
-            Время $t$, с & 10.67 & 14.18 & 16.00 & 23.41 & 26.78 & 28.34 & 34.50 & 42.34 & 50.03 & 53.50\\ \hline
-            $\Delta t$, с & \multicolumn{10}{|c|}{0.01}\\ \hline
-            Число оборотов $N$ & \multicolumn{10}{|c|}{10}\\ \hline
-            Период $t/N$, с & 1.067 & 1.418 & 1.600 & 2.341 & 2.678 & 2.834 & 3.450 & 4.234 & 5.003 & 5.350\\ \hline
-            $\Delta T$, с & \multicolumn{10}{|c|}{0.001}\\ \hline
+            Количество шариков $n$ & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12\\
+            \hline
+            Время $t$, с & 10.67 & 14.18 & 16.00 & 23.41 & 26.78 & 28.34 & 34.50 & 42.34 & 50.03 & 53.50\\
+            Период $T = t/N$, с & 1.067 & 1.418 & 1.600 & 2.341 & 2.678 & 2.834 & 3.450 & 4.234 & 5.003 & 5.350\\
+            \hline
+            Число оборотов $N$ & \multicolumn{10}{|c|}{10}\\
+            $\Delta t$, с & \multicolumn{10}{|c|}{0.01}\\
+            $\Delta T$, с & \multicolumn{10}{|c|}{0.001}\\
+            \hline
         \end{tabular}
-    \end{table}\\
-    Коэффициент регрессии графика $T(n)$ равен $k = 0.451\pm 0.028$ (см. рисунок \ref{графики моментов и периодов}).
-    \item Скрутим магнитную стрелку в виде кольца, измерим модуль кручения нити:
-    \begin{equation*}
-        f = \left(\frac{2\pi}{T}\right)^{2}\frac{12mR^{2}}{2} = \left(\frac{2\pi}{1.925}\right)^{2}\frac{3\cdot0.841\cdot 0.59^{2}}{2} \approx 1.433\times 10^{-7}\ \text{Единиц СИ}
-    \end{equation*}
-    Из-за малого порядка измеренной величины упругостью нити можно пренебречь.
+    \end{center}
+    Коэффициент регрессии графика $T(n)$ равен $k = 0.487\pm$ (см. рисунок \ref{графики моментов и периодов}).
     \item Исследуем зависимость момента силы тяжести $\mathcal{M}(n)$ от количества шариков в цепочке. Подвесим стрелку в положение равновесия, уравняем её дополнительным грузом. Используем четное число шариков в цепочке:
-    \begin{table}[htbp]
-        \centering
+    \begin{center}
         \begin{tabular}{|c|c|c|c|c|c|}
             \hline
-            Число шариков & 4 & 6 & 8 & 10 & 12\\ \hline
-            Масса $m_{x}$, г & 0.41 & 0.20 & 0.23 & 0.20 & 0.16\\ \hline
-            $\Delta m$, г & \multicolumn{5}{|c|}{0.01}\\ \hline
-            Длина плеча $l_{x}$, см & 0.59 & 1.18 & 1.77 & 2.36 & 2.95\\ \hline
-            $\Delta l_{x}$, см & \multicolumn{5}{|c|}{0.01}\\ \hline
-            $\mathcal{M}_{n}$, СГС & 462.2 & 462.9 & 399.6 & 335.6 & 273.0\\ \hline
-            $\Delta \mathcal{M}_{n}$, СГС & 3.3 & 3.0 & 2.8 & 3.1 & 4.1\\ \hline
+            Число шариков & 4 & 6 & 8 & 10 & 12\\
+            Масса $m_{x}$, г & 0.41 & 0.20 & 0.23 & 0.20 & 0.16\\
+            Длина плеча $l_{x}$, см & 0.59 & 1.18 & 1.77 & 2.36 & 2.95\\
+            $\mathcal{M}_{n}$, г*см2/с2 & 462.2 & 462.9 & 399.6 & 335.6 & 273.0\\
+            $\Delta \mathcal{M}_{n}$, г*см2/с2 & 3.3 & 3.0 & 2.8 & 3.1 & 4.1\\
+            \hline
+            $\Delta l_{x}$, см & \multicolumn{5}{|c|}{0.01}\\
+            $\Delta m$, г & \multicolumn{5}{|c|}{0.01}\\
+            \hline
         \end{tabular}
-        \caption{дополнительный груз для магнитной стрелки}
         \label{дополнительный груз для магнитной стрелки}
-    \end{table}\\
+    \end{center}
     Коэффициент регрессии графика $\mathcal{M}(n)$ равен $k = 36.17\pm 13.30$ (см. рисунок \ref{графики моментов и периодов})
     \item Рассчитаем горизональную составляющую магнитного поля:
     \begin{equation*}
-        \mathbf{B_{||}} = \frac{4\pi^{2} mR^{2}}{3\mathfrak{m}k^{2}} \approx 0.083\ \text{Единиц СГС}
-    \end{equation*}
-    \begin{equation*}
-        \Delta \mathbf{B_{||}} = \mathbf{B_{||}}\left(\frac{\Delta m}{m} + \frac{2\Delta R}{R} - \frac{2\Delta k}{k} - \frac{\Delta \mathfrak{m}}{\mathfrak{m}}\right) \approx 1.346 \cdot10^{-3}\ \text{Единиц СГС}
+        \mathbf{B_{||}} = \frac{4\pi^{2} mR^{2}}{3\mathfrak{m}k^{2}} = 0.083\ \text{} \quad
+        \Delta \mathbf{B_{||}} = \mathbf{B_{||}}\left(\frac{\Delta m}{m} + \frac{2\Delta R}{R} - \frac{2\Delta k}{k} - \frac{\Delta \mathfrak{m}}{\mathfrak{m}}\right) = 1.346 \cdot10^{-3}\ \text{}
     \end{equation*}
     \item Рассчитаем вертикальную составляющую магнитного поля:
     \begin{equation*}
-        \mathbf{B_{\perp}} = \frac{k}{\mathfrak{m}} \approx 0.63\ \text{Единиц СГС}
+        \mathbf{B_{\perp}} = \frac{k}{\mathfrak{m}} = 0.63\ \text{} \quad
+        \Delta \mathbf{B_{\perp}} = \mathbf{B_{\perp}}\left(\frac{\Delta k}{k} - \frac{\Delta \mathfrak{m}}{\mathfrak{m}}\right) = 0.22\ \text{}
     \end{equation*}
+    \item Рассчитаем величину магнитного наклонения $\beta$:
     \begin{equation*}
-        \Delta \mathbf{B_{\perp}} = \mathbf{B_{\perp}}\left(\frac{\Delta k}{k} - \frac{\Delta \mathfrak{m}}{\mathfrak{m}}\right) \approx 0.22\ \text{Единиц СГС}
+            \beta = \arctan{\frac{\mathbf{B_{\perp}}}{\mathbf{B_{||}}}} = 82^\circ
     \end{equation*}
-    \item Рассчитаем величину магнитного наклонения и величину полного магнитного поля:
+    \item Рассчитаем полную величину магнитного поля $\mathbf{B}$:
     \begin{equation*}
-            \beta = \arctan{\frac{\mathbf{B_{\perp}}}{\mathbf{B_{||}}}} \approx 82^\circ
+        \mathbf{B} = \sqrt{\mathbf{B_{||}}^{2} + \mathbf{B_{\perp}}^{2}} = 0.635\ \text{СГС} = 6.35\cdot 10^{-5}\ \text{} \quad
+        \Delta \mathbf{B} = \mathbf{B}\sqrt{\left(\frac{\partial \mathbf{B}}{\partial \mathbf{B_{||}}}\Delta \mathbf{B_{||}}\right)^{2} + \left(\frac{\partial \mathbf{B}}{\partial \mathbf{B_{\perp}}}\Delta \mathbf{B_{\perp}}\right)^{2}} = 0.22\ \text{}
     \end{equation*}
-    \begin{equation*}
-        \mathbf{B} = \sqrt{\mathbf{B_{||}}^{2} + \mathbf{B_{\perp}}^{2}} \approx 0.635\ \text{СГС} = 6.35\cdot 10^{-5}\ \text{Тл}
-    \end{equation*}
-    \begin{equation*}
-        \Delta \mathbf{B} = \mathbf{B}\sqrt{\left(\frac{\partial \mathbf{B}}{\partial \mathbf{B_{||}}}\Delta \mathbf{B_{||}}\right)^{2} + \left(\frac{\partial \mathbf{B}}{\partial \mathbf{B_{\perp}}}\Delta \mathbf{B_{\perp}}\right)^{2}} \approx 0.22\ \text{Единиц СГС}
-    \end{equation*}
+\end{enumerate}
+\section*{Графики для измеренных данных}
     \begin{figure}[htbp]
-        \centering
-        \begin{subfigure}{0.9\textwidth}
-            \centering
+        \begin{subfigure}{0.45\textwidth}
             \includegraphics[width=\linewidth]{period.png}
             \caption{график крутильных колебаний стрелки}
             \label{горизонтальная составляющая}
         \end{subfigure}
-        \hfill
-        \begin{subfigure}{0.9\textwidth}
-            \centering
+        \begin{subfigure}{0.45\textwidth}
             \includegraphics[width=\linewidth]{vertical.png}
             \caption{зависимость момента силы тяжести от числа шариков}
             \label{вертикальная составляющая}
@@ -218,7 +224,6 @@
         \caption{графики $T(n)$ и $\mathcal{M}(n)$}
         \label{графики моментов и периодов}
     \end{figure}
-\end{enumerate}
 \section*{Вывод}
     В работе были изучены свойства неодимовых магнитов, было измерено магнитное поле Земли, магнитное наклонение на широте Долгопрудного.
     \begin{enumerate}
@@ -231,9 +236,3 @@
         \item Лабораторные установки подходят для измерения составляющих магнитного поля.
     \end{enumerate}
 \end{document}
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.3\linewidth]{p4.png}
-%     \caption{магнитная стрелка, свернутая в кольцо}
-%     \label{магнитная стрелка, свернутая в кольцо}
-% \end{figure}
