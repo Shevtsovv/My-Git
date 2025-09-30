@@ -4,7 +4,7 @@
 \usepackage{graphicx}
 \usepackage{mathtools}
 \usepackage{amsfonts}
-\usepackage{subfigure}
+\usepackage{subcaption}
 \title{Лабораторная работа № 3.5.1 "Изучение плазмы газового разряда в неоне"}
 \author{Кирилл Шевцов Б03-402}
 \date{16.09.2025}
@@ -92,7 +92,7 @@ $R_{b}$ к регулируемому ВИП.
 \end{equation}
 Эту формулу можно использовать для определения температуры электронов по вольт-амперной характеристике двойного зонда.
 По пересечению асимптот с вертикальной осью можно определить ток насыщения $I_{in}$, а затем и концентрацию заряженных частиц в плазме.
-\section*{Выполнение работы}
+\section*{Измерения и снятие данных}
 \begin{enumerate}
     \item Настроим установку для ВАХ газового разряда согласно инструкции, плавно увеличивая напряжение на ВИП, запишем напряжение
     зажигания, показание вольтметра $V_{1}$. показания выходного напряжения $U_{out}$, входного $U_{in} = \alpha U_{out}$:
@@ -120,12 +120,18 @@ $R_{b}$ к регулируемому ВИП.
             \hline
         \end{tabular}
     \end{center}
-    \item Определим дифференциальное сопротивление:
+    \item Построим график вольт-амперной характеристики газового разряда (рис. \ref{sub@вах газового разряда}). Определим дифференциальное сопротивление:
     \begin{align}
-        R_{dif} = something \pm som \quad \delta R_{dif} = something
+        R_{dif} = 123 \pm 234\ \text{Ом} \quad \delta R_{dif} = 234\ \text{Ом}
     \end{align}
+    Построенный график соответствует участку Д-Г графика - поднормального тлеющего разряда:
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.4\linewidth]{current.png}
+    \end{figure}
     \item Подготовим установку для анализа зондовой характеристики разряда. Снимем ВАХ двойного зонда, плавно увеличивая напряжение
-    от $-U_{0}$ до $U_{0}$ при фиксированном токе разряда $I_{p}$
+    от $-U_{0}$ до $U_{0}$ при фиксированном токе разряда $I_{p}$. Построим график зондовых характеристик для разных разрядных токов
+    (см. рис. \ref{sub@вах двойного зонда})
     \begin{center}
         \centering
         \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
@@ -171,6 +177,23 @@ $R_{b}$ к регулируемому ВИП.
     \item Оценим степень ионизации плазмы, считая давление в трубке $P \approx 2$ торр.
     \item Построим графики зависимости $T_{e}(I_{p})$, $n_{e}(I_{p})$.
 \end{enumerate}
+\section*{Графики полученных измерений}
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\linewidth]{vax.png}
+        \caption{вах газового разряда}
+        \label{вах газового разряда}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\linewidth]{zond.png}
+        \caption{вах двойного зонда}
+        \label{вах двойного зонда}
+    \end{subfigure}
+    \caption{графики $T(n)$ и $\mathcal{M}(n)$}
+    \label{графики моментов и периодов}
+\end{figure}
+\section*{Вывод}
 \end{document}
 % \begin{figure}[htbp]
     %     \centering
