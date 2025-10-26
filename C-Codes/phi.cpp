@@ -3,22 +3,36 @@
 #include <stdexcept>
 #include <cmath>
 class Color{
-    std::vector<uint8_t> color_;
+    std::vector<unsigned int> color_;
     sf::Color c_;
 public:
-    Color(const std::vector<u_int8_t>& color) : color_(color), c_(color[0], color[1], color[2]){}
-    const std::vector<u_int8_t>& data() const {return color_;}
+    Color(const std::vector<unsigned int>& color) : color_(color), c_(color[0], color[1], color[2]){}
+    const std::vector<unsigned int>& data() const {return color_;}
     const sf::Color& sfc() const {return c_;}
 };
 class Heatmap{
     sf::Image im_;
-    const Color pixel_color(const double& value) const {
-        if(value < 0.5){
-            u_int8_t u = (value * 2) * 255;
-            return Color({0, u, 255});
-        } else{
-            u_int8_t v = (value - 0.5) * 2 * 255;
-            return Color({v, 255, 0});
+    Color pixel_color(double value) const {
+        const unsigned int mult = 5 * 255;
+        if (value < 0.2){
+            unsigned int g = static_cast<unsigned int>(value * mult);
+            return Color({0, g, 255});
+        }
+        else if (value < 0.4) {
+            unsigned int b = static_cast<unsigned int>((0.4 - value) * mult);
+            return Color({0, 255, b});
+        }
+        else if (value < 0.6) {
+            unsigned int r = static_cast<unsigned int>((value - 0.4) * mult);
+            return Color({r, 255, 0});
+        }
+        else if (value < 0.8) {
+            unsigned int g = static_cast<unsigned int>((0.8 - value) * mult);
+            return Color({255, g, 0});
+        }
+        else {
+            unsigned int b = static_cast<unsigned int>((value - 0.8) * mult);
+            return Color({255, 0, b});
         }
     }
 public:
@@ -29,7 +43,7 @@ public:
             }
         }
         std::size_t index = 0;
-        im_.create(data[0].size(), data.size());
+        im_.create(data[index].size(), data.size());
         double min = 0, max = 0;
         for(const auto& row : data){
             for(const auto& crd : row){
@@ -48,10 +62,11 @@ public:
     }
 };
 int main(){
-    std::vector<std::vector<double>> electricPotential(1200, std::vector<double>(1500));
-    for(std::size_t i = 0; i < 1200; i++){
-        for(std::size_t j = 0; j < 1500; j++)
-        electricPotential[i][j] = sqrt(i*i + j*j);
+    std::size_t M = 900, N = 900;
+    std::vector<std::vector<double>> electricPotential(M, std::vector<double>(M));
+    for(std::size_t i = 0; i < M; i++){
+        for(std::size_t j = 0; j < M; j++)
+        electricPotential[i][j] = (i * j);
     }
     Heatmap map(electricPotential, "heat.png");
 }
