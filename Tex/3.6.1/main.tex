@@ -1,0 +1,137 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[a4paper, top = 1.5cm, bottom = 1.5cm, left = 1cm, right = 1cm]{geometry}
+\usepackage[english, russian]{babel}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\title{Лабораторная работа № 3.6.1 "Спектральный анализ электрических сигналов"}
+\author{Кирилл Шевцов Б03-402}
+\begin{document}
+\maketitle
+Задача об изучении спектров сигналов сводится к поиску отклика системы $g(t)$ на внешнее воздействие $f(t)$.
+\begin{enumerate}
+    \item \textbf{Исследование спектра периодических последовательностей импульсов.}\\
+    Пусть на вход последовательной RLC-цепочки подается периодическая последовательностей импульсов, с длительностью $\tau$
+    и периодом $T$. Изобразим спектры этого сигнала, изменяя длительность сигнала в диапазоне $50 \mu s - 200 \mu s$.
+    \begin{figure}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{1a.png}
+            \caption{50 мкс}
+            \label{fig:sub1}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{1b.png}
+            \caption{100 мкс}
+            \label{fig:sub2}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{1c.png}
+            \caption{150 мкс}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{1d.png}
+            \caption{200 мкс}
+        \end{subfigure}
+        \caption{Спектры при переменном $\tau$}
+        \label{fig:main}
+    \end{figure}\\
+    Как видно, при увеличении длительности сигнала, ширина спектра становится уже.
+    Поскольку сигнал периодический, при уменьшении длительности сигнала, его ширина уменьшается $\nu_{0} \tau \sim 1$, графики это
+    демонстрируют.
+    \item \textbf{Исследование периодической последовательности цугов гармонических колебаний}
+    Цуг - это "обрывок" синусоиды / косинусоиды. Получим спектр этого сигнала, изменяя частоту повторения импульсов.
+    \begin{figure}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{zug1.png}
+            \caption{2 кГц}
+            \label{fig:zug1}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{zug2.png}
+            \caption{4 кГц}
+            \label{fig:zug2}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{zug3.png}
+            \caption{6 кГц}
+            \label{fig:zug3}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.4\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{zug4.png}
+            \caption{8 кГц}
+            \label{fig:zug4}
+        \end{subfigure}
+        \caption{Спектры при переменном $\tau$}
+        \label{fig:zug_all}
+    \end{figure}\\
+    На фотографиях спектра видно, что ширина цуга неизменна и равна $\nu_{0} = 1/\tau = 20\ \text{кГц}$, частота самого большого пика соответсвует
+    частоте несущей.
+    \item \textbf{Исследование спектров гармонических сигналов, модулированных по амплитуде}\\
+    Говорят, что сигнал модулирован по амплитуде, если
+    \begin{equation}
+        f(t) = a_{0}\left[1 + m\cos(\Omega t)\right]\sin(\omega t) = a(t)\sin(\omega t)
+    \end{equation}
+    Для амплитудно-модулированного сигнала делают приближение $\Omega \ll \omega$ (так как интересно посмотреть на амплитуды 
+    близ лежащих частот), $m \ll 1$. Получим спектр амплитудно модулированного сигнала.
+    \begin{align*}
+        f(t) = a_{0}\sin(\omega t) + a_{0}m\cos(\Omega t)\sin(\omega t) =
+        a_{0}\sin(\omega t) + \frac{a_{0}m}{2}\sin((\omega - \Omega) t) + \frac{a_{0}m}{2}\sin((\omega + \Omega) t)
+    \end{align*}
+    Аналогичные рассуждения, если модулированный по амплитуде сигнал содержит $\cos(\omega t)$.
+    Сигнал, модулированный по амплитуде, очень сильно осциллирует (фотография сделана с прибора) поэтому фильтруют его, усредняя квадрат сигнала. Именно так
+    и детектируют амплитудно-модулированный сигнал.
+    \begin{align*}
+        f(t) = a^{2}_{0}\left[1 + m\cos(\Omega t)\right]^{2}\sin^{2}(\omega t) = \frac{a^{2}(t)}{2}\left[1 + 2m\cos(\Omega t)\right] + \Sigma
+    \end{align*}
+    А затем отрезают слагаемые $\Sigma$ с высокими частотами (слагаемыми, содержащими косинусы частот $2\Omega \pm 2\omega$, $\Omega \pm 2\omega$)
+    \newpage
+    Сигнал, модулированный по амплитуде, с параметром глубины модуляции $m = 0.5$.
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.5\linewidth]{am.png}
+        \label{fig:am}
+        \caption{Амплитудно-модулированный сигнал}
+    \end{figure}\\
+    Никакой полезной информации из такого сигнала без фильтрации не достать. После фильтрования сигнал выглядит понятнее.
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.7\linewidth]{am_f.png}
+        \label{fig:am_f}
+        \caption{Отфильтрованный АМ - сигнал}
+    \end{figure}\\
+    Последний график представляет собой огибающую ам-сигнала - это и есть зашифрованная информация, которую нам пытаются донести.
+    При изменении параметра глубины модуляции, график входного сигнала изменяется.
+    \begin{figure}[htbp]
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{am.png}
+            \caption{m = 0.05}
+            \label{fig:m1}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{20m.png}
+            \caption{m = 0.1}
+            \label{fig:m2}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{50m.png}
+            \caption{m = 0.25}
+            \label{fig:m3}
+        \end{subfigure}
+    \end{figure}
+\end{enumerate}
+\end{document}
