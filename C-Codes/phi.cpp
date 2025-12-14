@@ -46,3 +46,9 @@ int main(){
     Polynomial poly1(j), poly2(f);
     std::cout << poly1 + poly2 << " " << poly2 + poly1;
 }
+
+
+
+
+
+
