@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.11)  15 DEC 2025 16:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.11)  27 DEC 2025 19:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"/home/amisto/Рабочий стол/My-lab/Скин-Эффект/main.tex"
-(/home/amisto/Рабочий стол/My-lab/Скин-Эффект/main.tex
+**"/home/amisto/Рабочий стол/My-Git/Lab/Tex/3.7.1/main.tex"
+(/home/amisto/Рабочий стол/My-Git/Lab/Tex/3.7.1/main.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -569,14 +569,14 @@ L3 programming layer <2024-01-22>
  ) 
 Here is how much of TeX's memory you used:
  6679 strings out of 475583
- 109336 string characters out of 5785559
+ 109312 string characters out of 5785559
  1937975 words of memory out of 5000000
  28626 multiletter control sequences out of 15000+600000
  571768 words of font info for 73 fonts, out of 8000000 for 9000
  475 hyphenation exceptions out of 8191
- 70i,14n,79p,594b,302s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 70i,14n,79p,586b,302s stack positions out of 10000i,1000n,20000p,200000b,200000s
  </home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm0800.600pk> </home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1200.600pk> </home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1728.600pk> </home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1440.600pk> </home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm2074.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on main.pdf (5 pages, 285175 bytes).
+Output written on main.pdf (5 pages, 285282 bytes).
 PDF statistics:
  248 PDF objects out of 1000 (max. 8388607)
  57 compressed objects within 1 object stream

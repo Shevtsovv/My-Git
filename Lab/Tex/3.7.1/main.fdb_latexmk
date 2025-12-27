@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1765804000.0874 "/home/amisto/Рабочий стол/My-lab/Скин-Эффект/main.tex" "main.pdf" "main" 1765804001.30768 0
+["pdflatex"] 1766854238.95765 "/home/amisto/Рабочий стол/My-Git/Lab/Tex/3.7.1/main.tex" "main.pdf" "main" 1766854239.37103 0
   "/etc/texmf/web2c/texmf.cnf" 1757586304.7408 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/labx1728.600pk" 1757586570.39763 45148 3e33e8fc205daf22b211c52da05c56af ""
   "/home/amisto/.texlive2023/texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm0800.600pk" 1757793448.52733 18220 4752f10812d74092f0669901789af742 ""
@@ -14,7 +14,7 @@
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm1440.tfm" 1757586567.38219 3256 3daaa33cf35cf3f354983aa3214ecd7f ""
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm1728.tfm" 1757586568.8471 3252 92d08740ce00199d6cf9ff4aaada81d1 ""
   "/home/amisto/.texlive2023/texmf-var/fonts/tfm/lh/lh-t2a/larm2074.tfm" 1757586565.87471 3264 03c2b9e4787a40d3b9c197c38b93b558 ""
-  "/home/amisto/Рабочий стол/My-lab/Скин-Эффект/main.tex" 1765803999.7739 11060 2fbe9740977f39534581e2aace4d5b8f ""
+  "/home/amisto/Рабочий стол/My-Git/Lab/Tex/3.7.1/main.tex" 1766854238.75254 11060 2fbe9740977f39534581e2aace4d5b8f ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -88,8 +88,8 @@
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1757586327 6908713 7aa169418c48a9deb340d7d2e4b368c4 ""
   "L_nu.png" 1765800388.82017 29648 cc44e0b5969bddeec7b48b288bde71ca ""
   "equip.png" 1765781792.05343 34699 4d5efbf068b88f941f05571d83ccbf1b ""
-  "main.aux" 1765804001.14807 1256 787332e102b4d0f586f2fe137e34495b "pdflatex"
-  "main.tex" 1765803999.7739 11060 2fbe9740977f39534581e2aace4d5b8f ""
+  "main.aux" 1766854239.30629 1256 787332e102b4d0f586f2fe137e34495b "pdflatex"
+  "main.tex" 1766854238.75254 11060 2fbe9740977f39534581e2aace4d5b8f ""
   "sigma1.png" 1765787579.7678 47676 b529d3c6f2a8435438c6e3f1292e5a35 ""
   "sigma2.png" 1765793333.60539 34221 53515c7bbcffe632b15bfdedd67cc76f ""
   "sigma3.png" 1765797782.8797 28428 50319f37249b62cdeeca76b423724c31 ""

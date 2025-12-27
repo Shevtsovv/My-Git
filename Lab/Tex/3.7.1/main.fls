@@ -1,9 +1,9 @@
-PWD /home/amisto/Рабочий стол/My-lab/Скин-Эффект
+PWD /home/amisto/Рабочий стол/My-Git/Lab/Tex/3.7.1
 INPUT /etc/texmf/web2c/texmf.cnf
 INPUT /usr/share/texmf/web2c/texmf.cnf
 INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
 INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
-INPUT /home/amisto/Рабочий стол/My-lab/Скин-Эффект/main.tex
+INPUT /home/amisto/Рабочий стол/My-Git/Lab/Tex/3.7.1/main.tex
 OUTPUT main.log
 INPUT /usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/share/texlive/texmf-dist/tex/latex/base/article.cls
