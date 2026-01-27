@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/matplotlib_app.dir/cxx/main.cpp.o -o matplotlib_app  libmplb.a -lsfml-window -lsfml-system -lsfml-graphics 

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmplb.a CMakeFiles/mplb.dir/src/Mpl.cpp.o
+/usr/bin/ranlib libmplb.a
