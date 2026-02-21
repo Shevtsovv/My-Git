@@ -1,4 +1,0 @@
-/home/amisto/Рабочий стол/Chart/build/CMakeFiles/mpl.dir
-/home/amisto/Рабочий стол/Chart/build/CMakeFiles/Qt.dir
-/home/amisto/Рабочий стол/Chart/build/CMakeFiles/edit_cache.dir
-/home/amisto/Рабочий стол/Chart/build/CMakeFiles/rebuild_cache.dir

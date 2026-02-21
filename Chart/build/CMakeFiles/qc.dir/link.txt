@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/qc.dir/cxx/main.cpp.o -o qc  libmplb.a -lsfml-window -lsfml-system -lsfml-graphics 

@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/chart.dir/cxx/main.cpp.o -o chart  libmpl.a -lsfml-window -lsfml-system -lsfml-graphics 

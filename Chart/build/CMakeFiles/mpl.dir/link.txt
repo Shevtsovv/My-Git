@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmpl.a CMakeFiles/mpl.dir/src/Mpl.cpp.o
-/usr/bin/ranlib libmpl.a
