@@ -55,6 +55,14 @@ public:
         }
         return Polynomial(mult_v);
     }
+    Polynomial operator/(double value) const{
+        if(value == 0){throw std::invalid_argument("incorrect value");}
+        std::vector<double> del = c_;
+        for(std::size_t i = 0; i < c_.size(); ++i){
+            del[i] /= value;
+        }
+        return Polynomial(del);
+    }
     double operator()(double value) const {
         double xx = 1;
         double fx = 0;
